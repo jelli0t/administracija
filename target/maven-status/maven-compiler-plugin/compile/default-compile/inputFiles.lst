@@ -1,3 +1,7 @@
 /home/nemanja/development/neks/administration/src/main/java/rs/neks/administration/conf/WebAppInitializer.java
+/home/nemanja/development/neks/administration/src/main/java/rs/neks/administration/model/Customer.java
+/home/nemanja/development/neks/administration/src/main/java/rs/neks/administration/conf/DatasourceConfiguration.java
 /home/nemanja/development/neks/administration/src/main/java/rs/neks/administration/conf/WebMvcConfiguration.java
+/home/nemanja/development/neks/administration/src/main/java/rs/neks/administration/dao/CustomerDaoImpl.java
 /home/nemanja/development/neks/administration/src/main/java/rs/neks/administration/controller/HomeController.java
+/home/nemanja/development/neks/administration/src/main/java/rs/neks/administration/dao/CustomerDao.java
