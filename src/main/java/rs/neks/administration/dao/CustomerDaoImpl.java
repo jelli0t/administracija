@@ -3,6 +3,10 @@
  */
 package rs.neks.administration.dao;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.hibernate.SessionFactory;
@@ -47,7 +51,24 @@ public class CustomerDaoImpl implements CustomerDao {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Customer> findAll(boolean aciveOnly) {
+		List<Customer> customers = null;
+		String HQL = new StringBuilder("from rs.neks.administration.model.Customer where 1=1")
+				.append(aciveOnly ? " and active = 1" : "")
+				.append(" order by name").toString();
+		try {
+			customers = sessionFactory.getCurrentSession().createQuery(HQL).getResultList();
+		} catch (Exception e) {
+			customers = new ArrayList<Customer>(0);
+		}
+		return customers;
+	}
+
+	
 	@Override
 	public boolean save(Customer customer) {
 		if(customer == null) {
@@ -55,6 +76,7 @@ public class CustomerDaoImpl implements CustomerDao {
 		}
 		try {
 			if(customer.getId() != null) {
+				customer.setModifiedOn(LocalDateTime.now());
 				sessionFactory.getCurrentSession().merge(customer);
 			} else {
 				sessionFactory.getCurrentSession().persist(customer);	

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment/head :: head( ~{::title} )">
+	<meta charset="UTF-8">
+	<title>Kupci</title>
+</head>
+
+<section th:fragment="all( customers )">
+	<ul>
+		<li>
+			<a th:href="@{/customers/0/edit}" onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
+				<span>Novi kupac</span>	
+			</a>
+		</li>
+		<li th:each="customer : ${customers}">
+			<div>
+				<span th:text="${customer.code}"></span>
+			</div>
+			<div>
+				<span th:text="${customer.name}" style="font-weight: 700; font-size: 1.125em;"></span><br>
+				<span th:text="${customer.altName}"></span>
+			</div>
+			<div>
+				<a th:href="@{/customers/{cust_id}/edit(cust_id = ${customer.id})}"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
+					<span>Edit</span>	
+				</a>				
+			</div>
+		</li>
+	</ul>
+</section>
+
+<!-- 
+*
+ -->
+<section th:fragment="profile( customer )">
+
+
+</section>
+
+<!-- 
+*
+ -->
+<section th:fragment="edit( customer )">
+
+	<form th:action="@{/customers/save}" th:object="${customer}" method="post">
+		<table>
+			<tr>
+				<td><label for="cust_code" >Šifra kupca:</label></td>
+				<td><input type="text" id="cust_code" th:field="*{code}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_name" >Naziv kupca:</label></td>
+				<td><input type="text" id="cust_name" th:field="*{name}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_altname" >Alternativni naziv:</label></td>
+				<td><input type="text" id="cust_altname" th:field="*{altName}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_pib" >PIB:</label></td>
+				<td><input type="text" id="cust_pib" th:field="*{pib}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_phone" >Broj telefona:</label></td>
+				<td><input type="text" id="cust_phone" th:field="*{phone}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_cellphone" >Mobilni telefon:</label></td>
+				<td><input type="text" id="cust_cellphone" th:field="*{cellPhone}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_email" >E-mail:</label></td>
+				<td><input type="text" id="cust_email" th:field="*{email}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_zipcode" >Poštanski broj:</label></td>
+				<td><input type="text" id="cust_zipcode" th:field="*{zipCode}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_place" >Mesto:</label></td>
+				<td><input type="text" id="cust_place" th:field="*{place}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_address" >Ulica i broj:</label></td>
+				<td><input type="text" id="cust_address" th:field="*{address}" /></td>
+			</tr>
+			<tr>
+				<td><label for="cust_note" >Opis:</label></td>
+				<td><textarea id="cust_note" th:field="*{description}"></textarea></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td>
+					<input type="checkbox" id="cust_active" th:field="*{active}" checked>
+					<label for="cust_note" >Aktian</label>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="hidden" th:field="*{id}">
+					<input type="hidden" th:field="*{createdOn}">
+					<input type="submit" value="Sacuvaj">
+				</td>
+			</tr>
+		</table>		
+	</form>
+
+</section>

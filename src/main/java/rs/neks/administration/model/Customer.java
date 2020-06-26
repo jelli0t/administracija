@@ -4,6 +4,7 @@
 package rs.neks.administration.model;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +12,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
+
+import rs.neks.administration.util.TextUtils;
 
 /**
  * @author nemanja
@@ -32,6 +37,10 @@ public class Customer {
 	@Column(name = "alt_name")
 	private String altName;
 
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	@Column(name = "active", columnDefinition = "TINYINT")
+	private boolean active;
+	
 	@Column(name = "created_on")
 	private LocalDateTime createdOn;
 
@@ -87,6 +96,14 @@ public class Customer {
 
 	public void setAltName(String altName) {
 		this.altName = altName;
+	}	
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public LocalDateTime getCreatedOn() {
@@ -150,7 +167,7 @@ public class Customer {
 	}
 
 	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
+		this.zipCode = TextUtils.isEmpty(zipCode) ? "00000" : zipCode;
 	}
 
 	public String getAddress() {
@@ -169,4 +186,13 @@ public class Customer {
 		this.description = description;
 	}
 
+	
+	@Override
+	public String toString() {
+		StringBuilder customer = new StringBuilder("Customer: {");
+		Optional.ofNullable(this.id).ifPresent(x -> customer.append("id: ").append(x).append(", "));
+		Optional.ofNullable(this.code).ifPresent(x -> customer.append("code: ").append(x).append(", "));
+		Optional.ofNullable(this.name).ifPresent(x -> customer.append("name: ").append(x));
+		return customer.append("}").toString();
+	}
 }

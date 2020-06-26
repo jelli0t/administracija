@@ -1,7 +1,0 @@
-rs/neks/administration/conf/WebMvcConfiguration.class
-rs/neks/administration/controller/HomeController.class
-rs/neks/administration/dao/CustomerDao.class
-rs/neks/administration/conf/DatasourceConfiguration.class
-rs/neks/administration/dao/CustomerDaoImpl.class
-rs/neks/administration/conf/WebAppInitializer.class
-rs/neks/administration/model/Customer.class

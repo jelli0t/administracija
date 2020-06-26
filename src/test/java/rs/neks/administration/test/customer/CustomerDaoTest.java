@@ -4,6 +4,7 @@ package rs.neks.administration.test.customer;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,11 +28,12 @@ public class CustomerDaoTest {
 	private CustomerDao customerDao;
 	
 
-//	@Test
+	@Test
 	public void createNewCustomerTest() {
 		Customer customer = new Customer();
-		customer.setName("NEKS d.o.o.");
-		customer.setAltName("Proizvodno trgovinsko preduzece NEKS d.o.o.");
+		customer.setName("DIS d.o.o.");
+		customer.setActive(true);
+		customer.setAltName("Trgovina DIS");
 		customer.setCreatedOn( LocalDateTime.now() );
 		customer.setModifiedOn( LocalDateTime.now() );
 		customer.setPhone("011258654");
@@ -40,7 +42,7 @@ public class CustomerDaoTest {
 		
 		
 		boolean saved = customerDao.save(customer);
-		System.out.println("Novi customer sacuvan!");
+		System.out.println("Novi customer sacuvan: " + customer);
 		
 		assertTrue("", saved);
 	}
@@ -49,6 +51,16 @@ public class CustomerDaoTest {
 	public void findCustomerTest() {
 		Customer customer = customerDao.findById(1);
 		assertTrue("Pronadjen Customer", customer != null);
+	}
+	
+	
+	@Test
+	public void listAllCustomersTest() {
+		List<Customer> customers = customerDao.findAll(false);
+		customers.forEach(c -> {
+			System.out.println( c );
+		});
+		assertTrue("Pronadjena lista kupaca?", customers.size() > 0);
 	}
 
 }

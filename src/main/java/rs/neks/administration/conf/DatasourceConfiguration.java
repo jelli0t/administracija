@@ -24,7 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *
  */
 @Configuration
-@ComponentScan(basePackages = {"rs.neks.administration.dao"})
+@ComponentScan(basePackages = {"rs.neks.administration.dao", "rs.neks.administration.service"})
 @PropertySource({"classpath:datasource.properties"})
 @EnableTransactionManagement
 public class DatasourceConfiguration {
