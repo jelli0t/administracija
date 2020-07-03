@@ -12,6 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 
@@ -28,19 +30,23 @@ public class Customer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
+	@NotNull(message = "Molimo unesite sifru kupca")
+	@Size(min = 3, max = 9, message = "Sifra kupca mora sadrzati izmedju 3 i 9 karaktera")
 	@Column(name = "customer_code")
 	private String code;
-	
+
+	@NotNull
+	@Size(min = 3, max = 30, message = "Naziv kupca mora sadrzati izmedju 3 i 30 karaktera")
 	private String name;
-	
+
 	@Column(name = "alt_name")
 	private String altName;
 
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	@Column(name = "active", columnDefinition = "TINYINT")
 	private boolean active;
-	
+
 	@Column(name = "created_on")
 	private LocalDateTime createdOn;
 
@@ -48,24 +54,24 @@ public class Customer {
 	private LocalDateTime modifiedOn;
 
 	private String phone;
-	
+
 	@Column(name = "cell_phone")
 	private String cellPhone;
-	
+
 	private String email;
 
 	private String pib;
-	
+
 	private String place;
-	
+
 	@Column(name = "zip_code")
 	private String zipCode;
 
 	private String address;
-	
-	private String description;
 
+	private String description;
 	
+
 	public Integer getId() {
 		return id;
 	}
@@ -96,7 +102,7 @@ public class Customer {
 
 	public void setAltName(String altName) {
 		this.altName = altName;
-	}	
+	}
 
 	public boolean isActive() {
 		return active;
@@ -186,7 +192,6 @@ public class Customer {
 		this.description = description;
 	}
 
-	
 	@Override
 	public String toString() {
 		StringBuilder customer = new StringBuilder("Customer: {");

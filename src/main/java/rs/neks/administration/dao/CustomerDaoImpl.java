@@ -79,6 +79,7 @@ public class CustomerDaoImpl implements CustomerDao {
 				customer.setModifiedOn(LocalDateTime.now());
 				sessionFactory.getCurrentSession().merge(customer);
 			} else {
+				customer.setCreatedOn(LocalDateTime.now());
 				sessionFactory.getCurrentSession().persist(customer);	
 			}
 		} catch (Exception e) {

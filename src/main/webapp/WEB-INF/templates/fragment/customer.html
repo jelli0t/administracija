@@ -9,7 +9,7 @@
 <section th:fragment="all( customers )">
 	<ul>
 		<li>
-			<a th:href="@{/customers/0/edit}" onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
+			<a th:href="@{/customers/add}" onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
 				<span>Novi kupac</span>	
 			</a>
 		</li>
@@ -44,15 +44,22 @@
  -->
 <section th:fragment="edit( customer )">
 
-	<form th:action="@{/customers/save}" th:object="${customer}" method="post">
+	<form th:action="@{/customers/save}" th:object="${customer}" method="post" name="add_or_edit_customer_form"
+		onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');">
 		<table>
 			<tr>
 				<td><label for="cust_code" >Šifra kupca:</label></td>
-				<td><input type="text" id="cust_code" th:field="*{code}" /></td>
+				<td>
+					<span th:if="${#fields.hasErrors('code')}" th:errors="*{code}" style="display: block; color: red; font-size: 0.915em;"></span>
+					<input type="text" id="cust_code" th:field="*{code}" />
+				</td>
 			</tr>
 			<tr>
 				<td><label for="cust_name" >Naziv kupca:</label></td>
-				<td><input type="text" id="cust_name" th:field="*{name}" /></td>
+				<td>
+					<span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="display: block; color: red; font-size: 0.915em;"></span>
+					<input type="text" id="cust_name" th:field="*{name}" />
+				</td>
 			</tr>
 			<tr>
 				<td><label for="cust_altname" >Alternativni naziv:</label></td>
@@ -100,7 +107,7 @@
 			<tr>
 				<td colspan="2">
 					<input type="hidden" th:field="*{id}">
-					<input type="hidden" th:field="*{createdOn}">
+<!-- 					<input type="hidden" th:field="*{createdOn}"> -->
 					<input type="submit" value="Sacuvaj">
 				</td>
 			</tr>
