@@ -1,63 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragment/head :: head( ~{::title}, ~{::script}  )">
+<head th:replace="fragment/head :: head( ~{::title} )">
 	<meta charset="UTF-8">
 	<title>Kupci</title>
-	
-	<script type="text/javascript">
-	
-		function insertFragmentTo(url, target) {
-			$.ajax({
-				url: url,	 		
-		        type: 'GET',
-			    dataType: 'html'
-			})
-			.done(function( response ) {
-				$('#'+target).html(response);
-			})
-			.fail(function( xhr, status, errorThrown ) {
-			    console.log( "Error: " + errorThrown );
-			});
-			return false;
-		}
-		
-		
-		function postAndFragmentResult($form, target) {
-			var json = {};    
-		    $.each($( $form ).serializeArray(), function() {
-		    	json[this.name] = this.value;
-		    });
-		    console.log(JSON.stringify(json));
-				
-			$.ajax({
-				url: $( $form ).attr('action'),
-				type : 'POST',
-				contentType : "application/json",
-				data: JSON.stringify(json),
-				dataType : 'html',
-				beforeSend: function(xhr) {
-// 		           		xhr.setRequestHeader(csrf[0], csrf[1]);
-		        	}
-			})
-			.done(function( response ) {
-				$('#'+target).html(response);
-			})
-			.fail(function( xhr, status, errorThrown ) {
-			    console.log( "Error: " + errorThrown );
-			});
-		}
-		
-	</script>
 </head>
 
 
 <body>	
 	<header th:replace="fragment/header :: header"></header>
-	
-	<div id="notification" th:if="${notification != null}">
-		<span th:text="${notification.message}"></span>
-	</div>
+
 
 	<section id="main_conetent" style="margin-top: 100px;">
 	

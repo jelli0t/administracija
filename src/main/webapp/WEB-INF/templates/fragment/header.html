@@ -6,9 +6,21 @@
 </head>
 
 
-<header th:fragment="header" style="position: fixed; top: 0; left: 0; right: 0;">
-	<h3>LOGO</h3>
-	Ovo je NEKS administracija
-</header>
-
+	<header th:fragment="header" style="position: fixed; top: 0; left: 0; right: 0;">
+		<h3>LOGO</h3>
+		Ovo je NEKS administracija
+		
+		
+		<th:block th:if="${notification != null}">
+			<div id="action-notification" th:class="${notification.affirmative ? 'affirmative' : 'failure'}">
+				<span class="x-1em-padding y-05em-padding" th:text="${notification.message}"></span>
+				<script type="text/javascript">
+					setTimeout(function() {
+						$('#action-notification').hide('slow');
+					}, 3000);
+				</script>
+			</div>
+		</th:block>
+	
+	</header>	
 </html>

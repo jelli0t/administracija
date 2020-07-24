@@ -19,3 +19,18 @@ create table if not exists customer
 		unique (customer_code)
 );
 
+create table if not exists invoice
+(
+	id int(9) auto_increment
+		primary key,
+	invoice_no varchar(16) null,
+	customer_id int(9) not null,
+	created_on timestamp null,
+	modified_on timestamp null,
+	quantity decimal(7,2) null,
+	dueForPayment timestamp null,
+	totalAmount decimal(12,2) null,
+	description varchar(255) null,
+	constraint INVNO_UNQ_CODE
+		unique (invoice_no)
+);
