@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment/head :: head( ~{::title} )">
+	<meta charset="UTF-8">
+	<title>Pregled Fakturisanja</title>
+</head>
+
+
+<body>	
+	<header th:replace="fragment/header :: header"></header>
+
+
+	<ul style="margin-top: 100px;">
+		<li>
+			<a th:href="@{/invoices/add}" onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
+				<span>Nova faktura</span>	
+			</a>
+		</li>
+		<li th:each="inv : ${invoices}">
+			<div>
+				<span th:text="${inv.customer.name}"></span>
+			</div>
+			<div>
+				<span th:text="${inv.invoiceNo}"></span>
+			</div>
+			<div>
+				<span th:text="${inv.createdOn}"></span>
+			</div>
+			<div>
+				<span th:text="${inv.quantity}"></span>
+			</div>
+			<div>
+				<span th:text="${inv.totalAmount}"></span>
+			</div>
+			<div>
+				<a th:href="@{/invoices/{inv_id}/edit(inv_id = ${inv.id})}"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
+					<span>Edit</span>	
+				</a>				
+			</div>
+		</li>
+	</ul>
+
+
+	<section id="main_conetent" style="margin-top: 100px;">
+	
+<!-- 		<div th:insert="fragment/customer :: all( ${customers} )"></div> -->
+
+		
+		
+	</section>
+	
+	<div>
+						
+	</div>
+		
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment/head :: head( ~{::title} )">
+	<meta charset="UTF-8">
+	<title>Kupci</title>
+</head>
+
+
+	<section th:fragment="edit">
+
+		<form th:action="@{/invoices/save}" th:object="${invoice}" method="post" name="add_or_edit_invoice_form"
+			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');">
+			<table>
+				<tr>
+					<td><label for="cust_name" >Kupac:</label></td>
+					<td>
+						<span th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}" style="display: block; color: red; font-size: 0.915em;"></span>
+						
+						<select th:field="*{customer}" id="cust_name">
+						    <option th:each="cus : ${customers}" th:value="${cus}" th:text="${cus.name}"></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td><label for="inv_no" >Broj fakture:</label></td>
+					<td>
+						<span th:if="${#fields.hasErrors('invoiceNo')}" th:errors="*{invoiceNo}" style="display: block; color: red; font-size: 0.915em;"></span>
+						<input type="text" id="inv_no" th:field="*{invoiceNo}" />
+					</td>
+				</tr>
+				
+<!-- 				<tr> -->
+<!-- 					<td><label for="cust_altname" >Alternativni naziv:</label></td> -->
+<!-- 					<td><input type="text" id="cust_altname" th:field="*{altName}" /></td> -->
+<!-- 				</tr> -->
+<!-- 				<tr> -->
+<!-- 					<td><label for="cust_pib" >PIB:</label></td> -->
+<!-- 					<td><input type="text" id="cust_pib" th:field="*{pib}" /></td> -->
+<!-- 				</tr> -->
+				
+				<tr>
+					<td><label for="inv_quantity" >Količina:</label></td>
+					<td><input type="text" id="inv_quantity" th:field="*{quantity}" /></td>
+				</tr>
+				
+<!-- 				<tr> -->
+<!-- 					<td><label for="cust_cellphone" >Mobilni telefon:</label></td> -->
+<!-- 					<td><input type="text" id="cust_cellphone" th:field="*{cellPhone}" /></td> -->
+<!-- 				</tr> -->
+				
+				<tr>
+					<td><label for="inv_total" >Vrednost (sa PDV):</label></td>
+					<td><input type="text" id="inv_total" th:field="*{totalAmount}" /></td>
+				</tr>
+				<tr>
+					<td><label for="cust_note" >Opis:</label></td>
+					<td><textarea id="cust_note" th:field="*{description}"></textarea></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<input type="hidden" th:field="*{id}">
+	<!-- 					<input type="hidden" th:field="*{createdOn}"> -->
+						<input type="submit" value="Sacuvaj">
+					</td>
+				</tr>
+			</table>		
+		</form>
+	
+	</section>
+
+</html>
