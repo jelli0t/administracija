@@ -33,12 +33,15 @@
 		
 		
 		function postAndFragmentResult($form, target) {
-			var json = {};    
-		    $.each($( $form ).serializeArray(), function() {
-		    	json[this.name] = this.value;
-		    });
+// 			var json = {};    
+// 		    $.each($( $form ).serializeArray(), function() {
+// 		    	json[this.name] = this.value;
+// 		    });
 // 		    console.log(JSON.stringify(json));
-// 		    console.log( JSON.stringify($( $form ).serializeObject()) );
+
+			var json = $( $form ).serializeObject();
+
+		    console.log(JSON.stringify(json));
 			$.ajax({
 				url: $( $form ).attr('action'),
 				type : 'POST',
@@ -66,7 +69,13 @@
 	                    o[this.name] = [o[this.name]];
 	                }
 	                o[this.name].push(this.value || '');
-	            } else {
+	            } 
+	            else if(this.name === 'customer'){ 
+	            	var customer = {};
+	            	customer['id'] = this.value || '';
+	            	o[this.name] = customer;
+	            }
+	            else {
 	                o[this.name] = this.value || '';
 	            }
 	        });

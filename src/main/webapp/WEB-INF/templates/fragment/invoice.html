@@ -18,7 +18,7 @@
 						<span th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}" style="display: block; color: red; font-size: 0.915em;"></span>
 						
 						<select th:field="*{customer}" id="cust_name">
-						    <option th:each="cus : ${customers}" th:value="${cus}" th:text="${cus.name}"></option>
+						    <option th:each="cus : ${customers}" th:value="${cus.id}" th:text="${cus.name}"></option>
 						</select>
 					</td>
 				</tr>

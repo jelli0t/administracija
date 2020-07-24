@@ -41,8 +41,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 	
 	@Override
 	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer) {
-		// TODO Auto-generated method stub
-		return null;
+		return invoiceDao.findAll(startDate, endDate, customer);
 	}
 
 	@Override

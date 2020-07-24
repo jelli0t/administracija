@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import rs.neks.administration.model.Invoice;
 import rs.neks.administration.util.TextUtils;
 
 @Repository(value = "invoiceDao")
+@Transactional
 public class InvoiceDaoImpl implements InvoiceDao {
 	
 	@Autowired
