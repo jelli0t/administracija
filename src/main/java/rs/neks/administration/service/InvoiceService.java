@@ -40,4 +40,11 @@ public interface InvoiceService {
 	 * @param customer
 	 * */
 	public boolean save(Invoice invoice);
+	
+	/**
+	 * Proverava da li je prosledjeni broj fakture unikatan.
+	 * 
+	 * @param invoiceNo
+	 * */
+	public boolean checkIfInvoiceNoIsUnique(String invoiceNo);
 }

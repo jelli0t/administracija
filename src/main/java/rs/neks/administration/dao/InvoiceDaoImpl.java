@@ -55,9 +55,9 @@ public class InvoiceDaoImpl implements InvoiceDao {
 	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer) {
 		List<Invoice> invoices = null;
 		String HQL = "from rs.neks.administration.model.Invoice where 1 = 1"
-				+ Optional.ofNullable(startDate).map(x -> " and createdOn >= :start_date").orElse(TextUtils.EMPTY_STRING)
-				+ Optional.ofNullable(endDate).map(x -> " and createdOn < :end_date").orElse(TextUtils.EMPTY_STRING)
-				+ Optional.ofNullable(customer).map(x -> " and customer = :customer").orElse(TextUtils.EMPTY_STRING)
+				+ Optional.ofNullable(startDate).map(x -> " and createdOn >= :start_date").orElse(TextUtils.EMPTY)
+				+ Optional.ofNullable(endDate).map(x -> " and createdOn < :end_date").orElse(TextUtils.EMPTY)
+				+ Optional.ofNullable(customer).map(x -> " and customer = :customer").orElse(TextUtils.EMPTY)
 				+ " order by createdOn";
 		try {		
 			Query query = sessionFactory.getCurrentSession().createQuery(HQL);
@@ -94,4 +94,16 @@ public class InvoiceDaoImpl implements InvoiceDao {
 		return true;
 	}
 
+	@Override
+	public boolean checkIfInvoiceNoIsUnique(String invoiceNo) {
+		String HQL = "select count(id) from rs.neks.administration.model.Invoice where invoiceNo = :invoice_no";
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(HQL).setParameter("invoice_no", invoiceNo);
+			int resutl = ((Number) query.getSingleResult()).intValue();
+			return resutl == 0;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return false;
+	}
 }

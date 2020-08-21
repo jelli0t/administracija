@@ -54,8 +54,10 @@
 			})
 			.done(function( response ) {
 				$('#'+target).html(response);
+				$('.overlay').parent().empty();
 			})
 			.fail(function( xhr, status, errorThrown ) {
+				$('#error_placeholder').html(xhr.responseText);
 			    console.log( "Error: " + errorThrown );
 			});
 		}
@@ -81,6 +83,12 @@
 	        });
 	        return o;
 	    };
+	    
+	    function closePopup() {
+	    	document.getElementById('popup_placeholder').innerHTML = '';
+	    	document.getElementById('error_placeholder').innerHTML = '';
+	    	return false;
+	    }
 		
 	</script>
 </head>

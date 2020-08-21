@@ -11,11 +11,12 @@
 	<header th:replace="fragment/header :: header"></header>
 
 
-	<section id="main_conetent" style="margin-top: 100px;">
+	<section id="main_conetent">
 	
-		<div th:insert="fragment/customer :: all( ${customers} )"></div>
+		<div th:insert="fragment/customer :: overview"></div>
 		
 	</section>
 		
+	<footer th:replace="fragment/footer :: footer"></footer>
 </body>
 </html>

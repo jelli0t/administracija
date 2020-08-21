@@ -6,30 +6,50 @@
 	<title>Kupci</title>
 </head>
 
-<section th:fragment="all( customers )">
-	<ul>
-		<li>
-			<a th:href="@{/customers/add}" onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
-				<span>Novi kupac</span>	
-			</a>
+<section th:fragment="overview">
+	<th:block th:if="${notification != null}">
+		<div id="action-notification" th:class="${notification.affirmative ? 'affirmative' : 'failure'}">
+			<span class="x-1em-padding y-05em-padding" th:text="${notification.message}"></span>
+			<script type="text/javascript">
+				setTimeout(function() {
+					$('#action-notification').hide('slow');
+				}, 3000);
+			</script>
+		</div>
+	</th:block>
+	
+	<div>
+		<a th:href="@{/customers/add}" onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+			<span>Dodaj kupca</span>	
+		</a>
+	</div>
+
+	<ul class="table-ul">
+		<li class="tr-li trh-li">
+			<div>Šifra kupca</div>
+			<div>Naziv kupca</div>
+			<div></div>
 		</li>
-		<li th:each="customer : ${customers}">
+		<li th:each="cust, stat : ${customers}" class="tr-li" th:id="${'cust_row_' + cust.id}"
+			th:classappend="${stat.odd} ? 'tr-odd' : ''">
 			<div>
-				<span th:text="${customer.code}"></span>
+				<span th:text="${cust.code}"></span>
 			</div>
-			<div>
-				<span th:text="${customer.name}" style="font-weight: 700; font-size: 1.125em;"></span><br>
-				<span th:text="${customer.altName}"></span>
+			<div class="txt-left">
+				<span th:text="${cust.name}"></span> <br>
+				<span th:text="${cust.altName}"></span>
 			</div>
-			<div>
-				<a th:href="@{/customers/{cust_id}/edit(cust_id = ${customer.id})}"
-					onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
+			<div>	
+				<a th:href="@{/customers/{cust_id}/edit(cust_id = ${cust.id})}"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
 					<span>Edit</span>	
-				</a>				
+				</a>		
 			</div>
 		</li>
 	</ul>
 </section>
+
+
 
 <!-- 
 *
@@ -39,81 +59,84 @@
 
 </section>
 
-<!-- 
-*
- -->
-<section th:fragment="edit( customer )">
 
-	<form th:action="@{/customers/save}" th:object="${customer}" method="post" name="add_or_edit_customer_form"
-		onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');">
-		<table>
-			<tr>
-				<td><label for="cust_code" >Šifra kupca:</label></td>
-				<td>
-					<span th:if="${#fields.hasErrors('code')}" th:errors="*{code}" style="display: block; color: red; font-size: 0.915em;"></span>
-					<input type="text" id="cust_code" th:field="*{code}" />
-				</td>
-			</tr>
-			<tr>
-				<td><label for="cust_name" >Naziv kupca:</label></td>
-				<td>
-					<span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="display: block; color: red; font-size: 0.915em;"></span>
-					<input type="text" id="cust_name" th:field="*{name}" />
-				</td>
-			</tr>
-			<tr>
-				<td><label for="cust_altname" >Alternativni naziv:</label></td>
-				<td><input type="text" id="cust_altname" th:field="*{altName}" /></td>
-			</tr>
-			<tr>
-				<td><label for="cust_pib" >PIB:</label></td>
-				<td><input type="text" id="cust_pib" th:field="*{pib}" /></td>
-			</tr>
-			<tr>
-				<td><label for="cust_phone" >Broj telefona:</label></td>
-				<td><input type="text" id="cust_phone" th:field="*{phone}" /></td>
-			</tr>
-			<tr>
-				<td><label for="cust_cellphone" >Mobilni telefon:</label></td>
-				<td><input type="text" id="cust_cellphone" th:field="*{cellPhone}" /></td>
-			</tr>
-			<tr>
-				<td><label for="cust_email" >E-mail:</label></td>
-				<td><input type="text" id="cust_email" th:field="*{email}" /></td>
-			</tr>
-			<tr>
-				<td><label for="cust_zipcode" >Poštanski broj:</label></td>
-				<td><input type="text" id="cust_zipcode" th:field="*{zipCode}" /></td>
-			</tr>
-			<tr>
-				<td><label for="cust_place" >Mesto:</label></td>
-				<td><input type="text" id="cust_place" th:field="*{place}" /></td>
-			</tr>
-			<tr>
-				<td><label for="cust_address" >Ulica i broj:</label></td>
-				<td><input type="text" id="cust_address" th:field="*{address}" /></td>
-			</tr>
-			<tr>
-				<td><label for="cust_note" >Opis:</label></td>
-				<td><textarea id="cust_note" th:field="*{description}"></textarea></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td>
-					<input type="checkbox" id="cust_active" th:field="*{active}" checked>
-					<label for="cust_note" >Aktian</label>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2">
-					<input type="hidden" th:field="*{id}">
-<!-- 					<input type="hidden" th:field="*{createdOn}"> -->
-					<input type="submit" value="Sacuvaj">
-				</td>
-			</tr>
-		</table>		
-	</form>
 
-</section>
+<div th:fragment="edit" class="overlay">		
+	<div class="popup-box">
+		<div class="popup-box-header">
+			<span th:text="${customer?.id != null ? 'Izmeni kupca' : 'Dodaj novog kupca'}"></span>
+		</div>
+		<form th:action="@{/customers/save}" th:object="${customer}" method="post" name="add_or_edit_customer_form"
+			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');"
+			class="y-1em-padding x-2em-padding">
+			<table>
+				<tr>
+					<td><label for="cust_code" >Šifra kupca:</label></td>
+					<td>
+						<span th:if="${#fields.hasErrors('code')}" th:errors="*{code}" class="fieldError-label"></span>
+						<input type="text" id="cust_code" th:field="*{code}" />
+					</td>
+				</tr>
+				<tr>
+					<td><label for="cust_name" >Naziv kupca:</label></td>
+					<td>
+						<span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="fieldError-label"></span>
+						<input type="text" id="cust_name" th:field="*{name}" />
+					</td>
+				</tr>
+				<tr>
+					<td><label for="cust_altname" >Alternativni naziv:</label></td>
+					<td><input type="text" id="cust_altname" th:field="*{altName}" /></td>
+				</tr>
+				<tr>
+					<td><label for="cust_pib" >PIB:</label></td>
+					<td><input type="text" id="cust_pib" th:field="*{pib}" /></td>
+				</tr>
+				<tr>
+					<td><label for="cust_phone" >Broj telefona:</label></td>
+					<td><input type="text" id="cust_phone" th:field="*{phone}" /></td>
+				</tr>
+				<tr>
+					<td><label for="cust_cellphone" >Mobilni telefon:</label></td>
+					<td><input type="text" id="cust_cellphone" th:field="*{cellPhone}" /></td>
+				</tr>
+				<tr>
+					<td><label for="cust_email" >E-mail:</label></td>
+					<td><input type="text" id="cust_email" th:field="*{email}" /></td>
+				</tr>
+				<tr>
+					<td><label for="cust_zipcode" >Poštanski broj:</label></td>
+					<td><input type="text" id="cust_zipcode" th:field="*{zipCode}" /></td>
+				</tr>
+				<tr>
+					<td><label for="cust_place" >Mesto:</label></td>
+					<td><input type="text" id="cust_place" th:field="*{place}" /></td>
+				</tr>
+				<tr>
+					<td><label for="cust_address" >Ulica i broj:</label></td>
+					<td><input type="text" id="cust_address" th:field="*{address}" /></td>
+				</tr>
+				<tr>
+					<td><label for="cust_note" >Opis:</label></td>
+					<td><textarea id="cust_note" th:field="*{description}"></textarea></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="checkbox" id="cust_active" th:field="*{active}" checked>
+						<label for="cust_note" >Aktian</label>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="y-1em-padding txt-right">
+						<input type="hidden" th:field="*{id}">							
+						<input type="button" value="Odustani" class="bttn" onclick="event.preventDefault(); javascript:closePopup();">
+						<input type="submit" value="Sacuvaj" class="bttn bttn-ok">
+					</td>
+				</tr>
+			</table>		
+		</form>
+	</div>
+</div>
 
 </html>

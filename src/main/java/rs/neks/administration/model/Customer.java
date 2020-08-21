@@ -200,4 +200,10 @@ public class Customer {
 		Optional.ofNullable(this.name).ifPresent(x -> customer.append("name: ").append(x));
 		return customer.append("}").toString();
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return super.equals(obj);
+	}
 }

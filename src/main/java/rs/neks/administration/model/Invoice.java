@@ -4,6 +4,7 @@
 package rs.neks.administration.model;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +17,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import rs.neks.administration.util.DateUtils;
+import rs.neks.administration.util.TextUtils;
 
 /**
  * @author nemanja
@@ -30,7 +34,7 @@ public class Invoice {
 	private Integer id;
 	
 	@NotNull(message = "Molimo unesite broj fakture")
-	@Size(min = 3, max = 9, message = "Sifra kupca mora sadrzati izmedju 3 i 9 karaktera")
+	@Size(min = 1, max = 9, message = "Sifra kupca mora sadrzati izmedju 1 i 9 karaktera")
 	@Column(name = "invoice_no")
 	private String invoiceNo;
 	
@@ -86,6 +90,18 @@ public class Invoice {
 	public void setCreatedOn(LocalDateTime createdOn) {
 		this.createdOn = createdOn;
 	}
+	
+	public String getPickerCreatedOn() {
+		return Optional.ofNullable(createdOn)
+				.map(d -> DateUtils.formatDateTime(d, DateUtils.PICKER_DATE_FORMATTER))
+				.orElse(DateUtils.formatDateTime(LocalDateTime.now(), DateUtils.PICKER_DATE_FORMATTER));
+	}
+	
+	public void setPickerCreatedOn(String createdOn) {
+		if(TextUtils.notEmpty(createdOn)) {
+			this.createdOn = DateUtils.parseDateTime(createdOn, DateUtils.PICKER_DATE_FORMATTER);
+		}			
+	}
 
 	public LocalDateTime getModifiedOn() {
 		return modifiedOn;
@@ -111,6 +127,18 @@ public class Invoice {
 		this.dueForPayment = dueForPayment;
 	}
 
+	public String getPickerDueForPayment() {
+		return Optional.ofNullable(dueForPayment)
+				.map(d -> DateUtils.formatDateTime(d, DateUtils.PICKER_DATE_FORMATTER))
+				.orElse(DateUtils.formatDateTime(LocalDateTime.now(), DateUtils.PICKER_DATE_FORMATTER));
+	}
+	
+	public void setPickerDueForPayment(String dueForPayment) {
+		if(TextUtils.notEmpty(createdOn)) {
+			this.dueForPayment = DateUtils.parseDateTime(dueForPayment, DateUtils.PICKER_DATE_FORMATTER);
+		}			
+	}
+	
 	public Double getTotalAmount() {
 		return totalAmount;
 	}

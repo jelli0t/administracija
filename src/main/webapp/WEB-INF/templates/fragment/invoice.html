@@ -6,67 +6,134 @@
 	<title>Kupci</title>
 </head>
 
-
-	<section th:fragment="edit">
-
-		<form th:action="@{/invoices/save}" th:object="${invoice}" method="post" name="add_or_edit_invoice_form"
-			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');">
-			<table>
-				<tr>
-					<td><label for="cust_name" >Kupac:</label></td>
-					<td>
-						<span th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}" style="display: block; color: red; font-size: 0.915em;"></span>
-						
-						<select th:field="*{customer}" id="cust_name">
-						    <option th:each="cus : ${customers}" th:value="${cus.id}" th:text="${cus.name}"></option>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td><label for="inv_no" >Broj fakture:</label></td>
-					<td>
-						<span th:if="${#fields.hasErrors('invoiceNo')}" th:errors="*{invoiceNo}" style="display: block; color: red; font-size: 0.915em;"></span>
-						<input type="text" id="inv_no" th:field="*{invoiceNo}" />
-					</td>
-				</tr>
-				
-<!-- 				<tr> -->
-<!-- 					<td><label for="cust_altname" >Alternativni naziv:</label></td> -->
-<!-- 					<td><input type="text" id="cust_altname" th:field="*{altName}" /></td> -->
-<!-- 				</tr> -->
-<!-- 				<tr> -->
-<!-- 					<td><label for="cust_pib" >PIB:</label></td> -->
-<!-- 					<td><input type="text" id="cust_pib" th:field="*{pib}" /></td> -->
-<!-- 				</tr> -->
-				
-				<tr>
-					<td><label for="inv_quantity" >Količina:</label></td>
-					<td><input type="text" id="inv_quantity" th:field="*{quantity}" /></td>
-				</tr>
-				
-<!-- 				<tr> -->
-<!-- 					<td><label for="cust_cellphone" >Mobilni telefon:</label></td> -->
-<!-- 					<td><input type="text" id="cust_cellphone" th:field="*{cellPhone}" /></td> -->
-<!-- 				</tr> -->
-				
-				<tr>
-					<td><label for="inv_total" >Vrednost (sa PDV):</label></td>
-					<td><input type="text" id="inv_total" th:field="*{totalAmount}" /></td>
-				</tr>
-				<tr>
-					<td><label for="cust_note" >Opis:</label></td>
-					<td><textarea id="cust_note" th:field="*{description}"></textarea></td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						<input type="hidden" th:field="*{id}">
-	<!-- 					<input type="hidden" th:field="*{createdOn}"> -->
-						<input type="submit" value="Sacuvaj">
-					</td>
-				</tr>
-			</table>		
-		</form>
+<section th:fragment="overview">
+	<th:block th:if="${notification != null}">
+		<div id="action-notification" th:class="${notification.affirmative ? 'affirmative' : 'failure'}">
+			<span class="x-1em-padding y-05em-padding" th:text="${notification.message}"></span>
+			<script type="text/javascript">
+				setTimeout(function() {
+					$('#action-notification').hide('slow');
+				}, 3000);
+			</script>
+		</div>
+	</th:block>
 	
-	</section>
+	<div>
+		<a th:href="@{/invoices/add}" onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+			<span>Nova faktura</span>	
+		</a>
+	</div>
+
+	<ul class="table-ul">
+		<li class="tr-li trh-li">
+			<div>Naziv kupca</div>
+			<div>Broj fakture</div>
+			<div>Datum fakturisanja</div>
+			<div>Datum dospeća</div>
+			<div>Otpremljena<br>Količina</div>
+			<div>Fakturisna vrednost<br>(sa PDV)</div>
+			<div></div>
+		</li>
+		<li th:each="inv, stat : ${invoices}" class="tr-li" th:id="${'inv_row_' + inv.id}"
+			th:classappend="${stat.odd} ? 'tr-odd' : ''">
+			<div>
+				<span th:text="${inv.customer.name}"></span>
+			</div>
+			<div>
+				<span th:text="${inv.invoiceNo}"></span>
+			</div>
+			<div class="date-value">
+				<span th:text="${inv.createdOn != null ? #temporals.format(inv.createdOn, 'dd.MM.yyyy') : ''}"></span>
+			</div>
+			<div class="date-value">
+				<span th:text="${inv.dueForPayment != null ? #temporals.format(inv.dueForPayment, 'dd.MM.yyyy') : ''}"></span>
+			</div>
+			<div>
+				<span th:text="${inv.quantity}"></span>
+			</div>
+			<div class="txt-right">
+				<span th:text="${#numbers.formatDecimal(inv.totalAmount,3,'POINT',2,'COMMA')}"></span>
+			</div>
+			<div>
+				<a th:href="@{/invoices/{inv_id}/edit(inv_id = ${inv.id})}"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+					<span>Edit</span>	
+				</a>				
+			</div>
+		</li>
+		<li class="tr-li">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div th:with="totalSum=${#aggregates.sum(invoices.![totalAmount])}" class="txt-right">
+				<span th:text="${#numbers.formatDecimal(totalSum,3,'POINT',2,'COMMA')}">0,00</span>
+			</div>
+			<div></div>
+		</li>
+	</ul>
+</section>
+
+	<div th:fragment="edit" class="overlay">		
+		<div class="popup-box">
+			<div class="popup-box-header">
+				<span th:text="${invoice?.id != null ? 'Izmena fakture' : 'Nova faktura'}"></span>
+			</div>
+			<form th:action="@{/invoices/save}" th:object="${invoice}" method="post" name="add_or_edit_invoice_form"
+				onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');"
+				class="y-1em-padding x-2em-padding">
+				<table>
+					<tr>
+						<td><label for="cust_name" >Kupac:</label></td>
+						<td>
+							<span th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}" style="display: block; color: red; font-size: 0.915em;"></span>
+							
+							<select name="customer" id="cust_name" >
+							    <option th:each="cus : ${customers}" 
+							    	th:value="${cus.id}" th:text="${cus.name}"
+							    	th:selected="${cus?.id == invoice?.customer?.id}" >
+							    </option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td><label for="inv_no" >Broj fakture:</label></td>
+						<td>
+							<span th:if="${#fields.hasErrors('invoiceNo')}" th:errors="*{invoiceNo}" class="fieldError-label"></span>
+							<input type="text" id="inv_no" th:field="*{invoiceNo}" th:class="${#fields.hasErrors('invoiceNo')}? fieldError"  />
+						</td>
+					</tr>				
+					<tr>
+						<td><label for="inv_cdate" >Datum fakturisanja:</label></td>
+						<td><input type="date" id="inv_cdate" th:field="*{pickerCreatedOn}" min="2010-01-01" /></td>
+					</tr>
+					<tr>
+						<td><label for="inv_due_date" >Datum dospeca:</label></td>
+						<td><input type="date" id="inv_due_date" th:field="*{pickerDueForPayment}" min="2010-01-01" /></td>
+					</tr>
+					<tr>
+						<td><label for="inv_quantity" >Količina:</label></td>
+						<td><input type="text" id="inv_quantity" th:field="*{quantity}" /></td>
+					</tr>				
+					<tr>
+						<td><label for="inv_total" >Vrednost (sa PDV):</label></td>
+						<td><input type="text" id="inv_total" th:field="*{totalAmount}" /></td>
+					</tr>
+					<tr>
+						<td><label for="cust_note" >Opis:</label></td>
+						<td><textarea id="cust_note" th:field="*{description}"></textarea></td>
+					</tr>
+					<tr>
+						<td colspan="2" class="y-1em-padding txt-right">
+							<input type="hidden" th:field="*{id}">							
+							<input type="button" value="Odustani" class="bttn" onclick="event.preventDefault(); javascript:closePopup();">
+							<input type="submit" value="Sacuvaj" class="bttn bttn-ok">
+						</td>
+					</tr>
+				</table>		
+			</form>
+		</div>
+	</div>
 
 </html>

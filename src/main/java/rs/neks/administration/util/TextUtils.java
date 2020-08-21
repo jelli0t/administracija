@@ -11,10 +11,14 @@ import org.springframework.lang.Nullable;
  */
 public abstract class TextUtils {
 	
-	public static final String EMPTY_STRING = "";
+	public static final String EMPTY = "";
 	public static final char SINGLE_SPACE = 0x20;
 
 	public static boolean isEmpty(@Nullable Object str) {
-		return (str == null || "".equals(str));
+		return (str == null || EMPTY.equals(str));
+	}
+	
+	public static boolean notEmpty(@Nullable Object str) {
+		return (str != null && !EMPTY.equals(str));
 	}
 }

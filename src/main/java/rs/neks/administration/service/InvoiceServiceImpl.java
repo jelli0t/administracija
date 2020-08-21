@@ -49,4 +49,12 @@ public class InvoiceServiceImpl implements InvoiceService {
 		return invoiceDao.save(invoice);
 	}
 
+	@Override
+	public boolean checkIfInvoiceNoIsUnique(String invoiceNo) {
+		if(TextUtils.isEmpty(invoiceNo)) {
+			
+			return false;
+		}
+		return invoiceDao.checkIfInvoiceNoIsUnique(invoiceNo);
+	}
 }

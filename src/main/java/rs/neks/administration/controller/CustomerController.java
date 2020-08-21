@@ -9,15 +9,17 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rs.neks.administration.model.Customer;
@@ -44,30 +46,31 @@ public class CustomerController {
 	}
 	
 	@RequestMapping(path = {"/add", "/{id}/edit"}, method = RequestMethod.GET)
-	public String prepareCustomerEdit(@PathVariable Optional<Integer> id, Model model) {
+	public ModelAndView prepareCustomerEdit(@PathVariable Optional<Integer> id, ModelMap model) {
 		Customer customer = id.map(x -> customerService.findById(x))
 				.orElse(new Customer());				
 		if(!model.containsAttribute("customer")) {
 			model.addAttribute("customer", customer);
-		}		
-		return "fragment/customer :: edit";
+		}
+		return new ModelAndView("fragment/customer :: edit", model, (HttpStatus) model.getAttribute("httpStatus"));
 	}
 	
 	
 	@RequestMapping(path = "/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public String saveCustomer(@Valid @RequestBody Customer customer, BindingResult bindingResult, Model model, 
-			RedirectAttributes redirectAttributes) {
+	public ModelAndView saveCustomer(@Valid @RequestBody Customer customer, BindingResult bindingResult, ModelMap modelMap, 
+			RedirectAttributes redirectAttributes) {		
 		if (bindingResult.hasErrors()) {
-			model.addAttribute("customer", customer);
-			bindingResult.getModel().entrySet().forEach(es -> {
-				model.addAttribute(es.getKey(), es.getValue());
-			});
-			return prepareCustomerEdit(Optional.empty(), model);
+			modelMap.addAttribute("customer", customer);
+			modelMap.addAttribute("httpStatus", HttpStatus.BAD_REQUEST);
+			modelMap.addAllAttributes(bindingResult.getModel());
+			return prepareCustomerEdit(Optional.empty(), modelMap);
 		}
+		
 		boolean result = customerService.save(customer);
 		Notification notification = new Notification(result, "Uspesno ste sacuvali podatke o kupcu", null);
 		redirectAttributes.addFlashAttribute("notification", notification);
-		return "redirect:/customers";
+		redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
+		return new ModelAndView("redirect:/customers");
 	}
 	
 }
