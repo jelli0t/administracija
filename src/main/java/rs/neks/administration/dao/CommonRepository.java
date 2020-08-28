@@ -3,12 +3,13 @@
  */
 package rs.neks.administration.dao;
 
+import rs.neks.administration.model.Idable;
 
 /**
  * @author nemanja
  *
  */
-public interface CommonRepository<T> {
+public interface CommonRepository<T extends Idable> {
 	
 	/**
 	 * Pronalazi Entitet za zadati ID.

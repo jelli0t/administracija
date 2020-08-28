@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+</head>
+
+
+<section th:fragment="overview">
+	<th:block th:if="${notification != null}">
+		<div id="action-notification" th:class="${notification.affirmative ? 'affirmative' : 'failure'}">
+			<span class="x-1em-padding y-05em-padding" th:text="${notification.message}"></span>
+			<script type="text/javascript">
+				setTimeout(function() {
+					$('#action-notification').hide('slow');
+				}, 3000);
+			</script>
+		</div>
+	</th:block>
+
+	<ul class="table-ul">
+		<li class="tr-li trh-li">
+			<div>Šifra kupca</div>
+			<div>Naziv kupca</div>
+			<div>Datum fakturisanja</div>
+			<div>Datum dospeća</div>
+			<div>Fakturisna vrednost<br>(sa PDV)</div>
+			<div>Plaćeno</div>
+			<div>Ostatak Duga</div>
+			<div></div>
+		</li>
+		<li th:each="inv, stat : ${invoices}" class="tr-li" th:id="${'inv_row_' + inv.id}"
+			th:classappend="${stat.odd} ? 'tr-odd' : ''">
+			<div>
+				<span th:text="${inv.customer.code}"></span>
+			</div>
+			<div>
+				<span th:text="${inv.customer.name}"></span>
+			</div>
+			<div class="date-value">
+				<span th:text="${inv.createdOn != null ? #temporals.format(inv.createdOn, 'dd.MM.yyyy') : ''}"></span>
+			</div>
+			<div class="date-value">
+				<span th:text="${inv.dueForPayment != null ? #temporals.format(inv.dueForPayment, 'dd.MM.yyyy') : ''}"></span>
+			</div>
+			<div class="txt-right">
+				<span th:text="${#numbers.formatDecimal(inv.totalAmount,3,'POINT',2,'COMMA')}"></span>
+			</div>
+			<div class="txt-right">
+				<span th:text="${#numbers.formatDecimal(inv.paidAmount, 3,'POINT',2,'COMMA')}"></span>
+			</div>
+			<div class="txt-right red-txt">
+				<span th:text="${#numbers.formatDecimal(inv.totalAmount,3,'POINT',2,'COMMA')}"></span>
+			</div>
+			<div>
+				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+					<span>Uplate</span>	
+				</a>				
+			</div>
+		</li>
+		<li class="tr-li">
+			<div></div>
+			<div></div>
+			<div></div>
+			<div></div>
+			<div th:with="totalSum=${#aggregates.sum(invoices.![totalAmount])}" class="txt-right">
+				<span th:text="${#numbers.formatDecimal(totalSum,3,'POINT',2,'COMMA')}">0,00</span>
+			</div>
+			<div></div>
+			<div></div>
+			<div></div>
+		</li>
+	</ul>
+</section>
+
+<!-- ----------------------------------
+*============  LISTA UPLATA ===========
+ ---------------------------------  -->
+<section th:fragment="payments" class="overlay">
+	<div class="popup-box">
+		<div class="popup-box-header">
+			<span>Pregled uplata</span>
+		</div>
+		<ul class="table-ul">
+			<li class="tr-li trh-li">
+				<div>R.br.</div>
+				<div>Datum uplate</div>
+				<div>Iznos</div>
+			</li>
+			<th:block th:unless="${#lists.isEmpty(payments)}" >
+				<li th:each="pay, stat : ${payments}" class="tr-li" th:id="${'paid_row_' + pay.id}"
+					th:classappend="${stat.odd} ? 'tr-odd' : ''">
+					<div>
+						<span th:text="${stat.index}"></span>
+					</div>
+					<div class="date-value">
+						<span th:text="${pay.paymentDate != null ? #temporals.format(pay.paymentDate, 'dd.MM.yyyy') : ''}"></span>
+					</div>
+					<div class="txt-right">
+						<span th:text="${#numbers.formatDecimal(pay.amount,3,'POINT',2,'COMMA')}"></span>
+					</div>
+					<div>
+						<a th:href="@{/billings/invoices/{inv_id}/payments/{pay_id}/edit(inv_id=${pay.invoice.id}, pay_id=${pay.id})}"
+							onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+							<span>Izmeni</span>	
+						</a>				
+					</div>
+				</li>
+				<li class="tr-li">
+					<div></div>
+					<div></div>
+					<div th:with="totalSum=${#aggregates.sum(payments.![amount])}" class="txt-right">
+						<span th:text="${#numbers.formatDecimal(totalSum,3,'POINT',2,'COMMA')}">0,00</span>
+					</div>
+					<div></div>
+				</li>
+			</th:block>
+			<th:block th:if="${#lists.isEmpty(payments)}">
+				<li class="tr-li">
+					<div style="display: block;">Nema uplata</div>
+				</li>
+			</th:block>
+		</ul>
+		<div>
+			<a href="javascript:;" class="bttn" onclick="event.preventDefault(); javascript:closePopup();">
+				<span>Odustani</span>
+			</a>
+			&emsp;
+			<a th:href="@{/billings/invoices/{inv_id}/payments/add(inv_id=${invoice.id})}"
+				onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');" class="bttn bttn-ok">
+				<span>+ Unesi uplatu</span>	
+			</a>
+		</div>
+	</div>
+</section>
+
+
+<div th:fragment="payment" class="overlay">		
+	<div class="popup-box">
+		<div class="popup-box-header">
+			<span th:text="${invoice?.id != null ? 'Izmena uplate na fakturi' : 'Nova uplata na fakturi'}"></span>
+		</div>
+		<!-- 			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');" -->
+		<form th:action="@{/billings/payments/save}" th:object="${payment}" method="post" name="add_or_edit_payment_form"
+			class="y-1em-padding x-2em-padding">
+			<table>
+				<tr th:with="inv=${invoice}">
+					<td><label for="inv_no" >Broj fakture:</label></td>
+					<td>
+						<span th:if="${#fields.hasErrors('invoice')}" th:errors="*{invoice.id}" class="fieldError-label"></span>
+						<input type="text" id="inv_no" name="invoice.id" th:value="${inv.id}" class="s-input"
+							th:appendclass="${#fields.hasErrors('invoice')}? fieldError" readonly="readonly"/>
+					</td>
+				</tr>				
+				<tr>
+					<td><label for="pay_pdate" >Datum uplate:</label></td>
+					<td><input type="date" id="pay_pdate" th:field="*{pickerPaymentDate}" min="2010-01-01" /></td>
+				</tr>			
+				<tr>
+					<td><label for="pay_amount" >Iznos</label></td>
+					<td><input type="text" id="pay_amount" th:field="*{amount}" class="s-input" style="font-weight: bolder;" /></td>
+				</tr>
+				<tr>
+					<td colspan="2" class="y-1em-padding txt-right">
+						<input type="hidden" th:field="*{id}">							
+						<input type="button" value="Odustani" class="bttn" onclick="event.preventDefault(); javascript:closePopup();">
+						<input type="submit" value="Sacuvaj" class="bttn bttn-ok">
+					</td>
+				</tr>
+			</table>		
+		</form>
+	</div>
+</div>
+
+
+</html>

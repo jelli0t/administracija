@@ -27,6 +27,7 @@ import rs.neks.administration.model.Customer;
 import rs.neks.administration.model.Invoice;
 import rs.neks.administration.service.CustomerService;
 import rs.neks.administration.service.InvoiceService;
+import rs.neks.administration.util.DateUtils;
 import rs.neks.administration.util.Notification;
 
 /**
@@ -45,15 +46,37 @@ public class InvoiceController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String customersHomepage(Model model) {
-		List<Invoice> invoices = invoiceService.findAll(LocalDateTime.of(2020, 1, 1, 0, 0), null, null);
+	public String defaultOverview(Model model) {
+		final LocalDateTime from = DateUtils.makeOrDefault(0, 0, 1);
+		final LocalDateTime to = from.plusMonths(1);
+		List<Invoice> invoices = invoiceService.findAll(from, to, null);
 		model.addAttribute("invoices", invoices);
+		model.addAttribute("month", from.getMonthValue());
+		model.addAttribute("year", from.getYear());
+		return "invoices";
+	}
+	
+	@RequestMapping(path = "/year/{year}", method = RequestMethod.PUT)
+	public String switchYear(@PathVariable Optional<Integer> year, Model model) {
+		if(!year.isPresent()) {
+			return "redirect:/invoices";
+		}
+		final LocalDateTime from = DateUtils.makeOrDefault(year.get(), 1, 1);
+		final LocalDateTime to = from.plusYears(1);
+		List<Invoice> invoices = invoiceService.findAll(from, to, null);
+		model.addAttribute("invoices", invoices);
+		model.addAttribute("year", from.getYear());
 		return "invoices";
 	}
 
-	@RequestMapping(path = "/overview", method = RequestMethod.GET)
-	public String prepareInvoiceOverview(Model model) {
-		List<Invoice> invoices = invoiceService.findAll(LocalDateTime.of(2020, 1, 1, 0, 0), null, null);
+	@RequestMapping(path = {"/overview", "/overview/{year}/{month}"}, method = RequestMethod.GET)
+	public String prepareInvoiceOverview(
+			@PathVariable Optional<Integer> year, 
+			@PathVariable Optional<Integer> month, 
+			Model model) {
+		final LocalDateTime from = DateUtils.makeOrDefault(year.orElse(0), month.orElse(0), 1);
+		final LocalDateTime to = from.plusMonths(1);
+		List<Invoice> invoices = invoiceService.findAll(from, to, null);
 		model.addAttribute("invoices", invoices);
 		return "fragment/invoice :: overview";
 	}

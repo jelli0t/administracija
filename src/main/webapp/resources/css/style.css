@@ -9,7 +9,8 @@ html, body, div, article, section, img, ul, ol, a {
 }
 
 body {
-  min-height: 100vh;
+	min-height: 100vh;
+  	background-color: #f4f5f6;
 }
 
 ul, ol {
@@ -223,7 +224,7 @@ ul, ol {
 	display: table;
 	border-collapse: collapse;
 	background-color: #fff;
-    border: 1px solid #e1e4e8;
+    border: 1px solid #ccc;  /* #e1e4e8; */
     border-radius: 6px;
     text-align: center;
 }
@@ -231,7 +232,7 @@ ul, ol {
 .trh-li {
 	font-weight: bolder;
 	text-align: center;
-	font-size: 0.975em;
+	font-size: 0.9125em;
 /* 	background: #f9826c; */
 }
 
@@ -255,6 +256,7 @@ ul, ol {
 
 input[type=text], input[type=date], select, textarea {
 	padding: 6px 12px;
+	margin: 2px 0;
     font-size: 0.975em;
     line-height: 20px;
     color: #24292e;
@@ -270,8 +272,13 @@ input[type=text], input[type=date], select, textarea {
 
 label {
 	font-size: 0.85em;
-	color: #333;
+	color: rgba(36, 41, 46, 0.8);
+	padding-right: 0.5em;
 }
+
+.s-input { width: 80px; }
+.m-input { width: 100px; }
+.l-input { width: 120px; }
 
 .date-value {
 	font-family: monospace;
@@ -340,7 +347,7 @@ label {
 /* 	display: inline-block; */
 	background-color: #fff;
 	background-clip: padding-box;
-	border: 2px solid #e1e4e8;
+	border: 1px solid #ccc;  /* #e1e4e8; */
 	border-radius: 6px;
 	box-shadow: 0 8px 24px rgba(149, 157, 165, .2);
 }
@@ -348,17 +355,26 @@ label {
 .popup-box-header {
 	background-color: #f1f8ff;
     border-color: #c8e1ff;
-	padding: 16px;
+	padding: 0.75em 1.25em;
     margin: -1px -1px 0;
     background-color: #f6f8fa;
     border: 1px solid #e1e4e8;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    font-weight: 700;
+    color: #000;
+/*     font-weight: 700; */
 }
 
 .fieldError-label {
 	display: block;
 	color: #e34c26;
 	font-size: 0.825em;
+}
+.red-txt {
+	color: #ff271c;
+}
+
+.active {
+	background: #2ba728;
+	color: white;
 }

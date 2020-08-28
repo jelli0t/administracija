@@ -4,6 +4,7 @@
 package rs.neks.administration.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -58,6 +60,10 @@ public class Invoice {
 	private Double totalAmount;
 	
 	private String description;
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy="invoice")
+	private List<Payment> payments;
+	
 
 	public Integer getId() {
 		return id;
@@ -154,6 +160,17 @@ public class Invoice {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public List<Payment> getPayments() {
+		return payments;
+	}
 	
+	
+	public Double getPaidAmount() {
+		if(this.payments != null && payments.size() > 0) {
+			return payments.stream().mapToDouble(Payment::getAmount).sum();
+		}
+		return 0d;
+	}
 	
 }

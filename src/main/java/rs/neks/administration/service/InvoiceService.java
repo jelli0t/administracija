@@ -8,6 +8,7 @@ import java.util.List;
 
 import rs.neks.administration.model.Customer;
 import rs.neks.administration.model.Invoice;
+import rs.neks.administration.model.Payment;
 
 /**
  * @author nemanja
@@ -23,6 +24,13 @@ public interface InvoiceService {
 	public Invoice findById(int id);
 	
 	/**
+	 * Pronalazi potpun Invoice objekat, sto ukljucuje i uplate vezane za fakturu.
+	 * 
+	 * @param id
+	 * */
+	public Invoice findFullyById(int id);
+	
+	/**
 	 * Pronalazi Fakturu za zadati br.
 	 * 
 	 * @param broj fakture
@@ -33,6 +41,11 @@ public interface InvoiceService {
 	 * 
 	 * */
 	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer);
+	
+	/**
+	 * 
+	 * */
+	public List<Invoice> findAllSortedByCustomer(LocalDateTime startDate, LocalDateTime endDate);
 	
 	/**
 	 * Cuva novu instancu ili radi merge za postojecu.
@@ -47,4 +60,9 @@ public interface InvoiceService {
 	 * @param invoiceNo
 	 * */
 	public boolean checkIfInvoiceNoIsUnique(String invoiceNo);
+
+	/**
+	 * 
+	 * */
+	public boolean savePayment(Payment payment);	
 }

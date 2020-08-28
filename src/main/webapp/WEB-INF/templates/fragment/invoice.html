@@ -58,7 +58,12 @@
 				<a th:href="@{/invoices/{inv_id}/edit(inv_id = ${inv.id})}"
 					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
 					<span>Edit</span>	
-				</a>				
+				</a>
+				
+				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+					<span>Uplate</span>	
+				</a>			
 			</div>
 		</li>
 		<li class="tr-li">

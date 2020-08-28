@@ -3,7 +3,7 @@
 
 <head th:replace="fragment/head :: head( ~{::title} )">
 	<meta charset="UTF-8">
-	<title>Pregled Fakturisanja</title>
+	<title>Pregled potraživanja</title>
 </head>
 
 
@@ -12,6 +12,7 @@
 
 	<main class="fx-box fx-dir-row fx-grow1">
 		<aside>
+		<!--
 			<ul>
 				<li th:each="m, stat : ${T(java.time.Month).values()}" class="tr-li">
 					<a th:href="@{/invoices/overview/{yyyy}/{mm}(yyyy=${year}, mm=${m.getValue()})}"
@@ -21,10 +22,12 @@
 					</a>					
 				</li>
 			</ul>		
+		 -->
 		</aside>
+		
 		<section id="main_conetent">
 
-			<th:block th:include="fragment/invoice :: overview">				
+			<th:block th:include="fragment/billing :: overview">				
 			</th:block>			
 					
 		</section>

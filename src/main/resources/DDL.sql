@@ -34,3 +34,11 @@ create table if not exists invoice
 	constraint INVNO_UNQ_CODE
 		unique (invoice_no)
 );
+
+create table if not exists payment
+(
+	id int(9) auto_increment primary key,
+	payment_date timestamp null,
+	amount decimal(12,2) null,
+	invoice_id int(9) null
+);

@@ -5,10 +5,12 @@ package rs.neks.administration.util;
 
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
+import java.util.Optional;
 
 /**
  * @author jelles
@@ -46,6 +48,14 @@ public class DateUtils {
 			}
 		}
 		return null;
+	}
+	
+	
+	public static LocalDateTime makeOrDefault(Integer year, Integer month, Integer dayOfMonth) {
+		int yyyy = Optional.ofNullable(year).filter(y -> y > 2000 & y < 2100).orElse(LocalDateTime.now().getYear());
+		Month mm = Optional.ofNullable(month).filter(m -> m > 0 & m <= 12).map(Month::of).orElse(LocalDateTime.now().getMonth());
+		int dd = Optional.ofNullable(dayOfMonth).filter(d -> d > 0 & d <= mm.maxLength()).orElse(LocalDateTime.now().getDayOfMonth());
+		return LocalDateTime.of(yyyy, mm, dd, 0, 0);
 	}
 	
 }

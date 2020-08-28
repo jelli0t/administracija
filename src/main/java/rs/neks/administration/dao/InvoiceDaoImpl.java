@@ -43,6 +43,21 @@ public class InvoiceDaoImpl implements InvoiceDao {
 		}		
 		return invoice;
 	}
+	
+	@Override
+	public Invoice findFullyById(int id) {
+		Invoice invoice = null;
+		String HQL = "from rs.neks.administration.model.Invoice inv left join fetch inv.payments where inv.id = :id";
+		try {		
+			invoice = (Invoice) sessionFactory.getCurrentSession()
+					.createQuery(HQL).setParameter("id", id)
+					.getSingleResult();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return invoice;
+	}
 
 	@Override
 	public Invoice findByNo(String invoiceNo) {
@@ -83,7 +98,7 @@ public class InvoiceDaoImpl implements InvoiceDao {
 				invoice.setModifiedOn(LocalDateTime.now());
 				sessionFactory.getCurrentSession().merge(invoice);
 			} else {
-				invoice.setCreatedOn(LocalDateTime.now());
+//				invoice.setCreatedOn(LocalDateTime.now());
 				sessionFactory.getCurrentSession().persist(invoice);
 			}
 		} catch (Exception e) {

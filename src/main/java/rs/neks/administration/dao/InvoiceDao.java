@@ -21,6 +21,9 @@ public interface InvoiceDao {
 	 * @param id
 	 * */
 	public Invoice findById(int id);
+	
+	
+	public Invoice findFullyById(int id);
 
 	/**
 	 * Pronalazi Fakturu za zadati br.
