@@ -52,7 +52,7 @@
 				<span th:text="${inv.quantity}"></span>
 			</div>
 			<div class="txt-right">
-				<span th:text="${#numbers.formatDecimal(inv.totalAmount,3,'POINT',2,'COMMA')}"></span>
+				<span th:text="${#numbers.formatDecimal(inv.totalAmount,1,'POINT',2,'COMMA')}"></span>
 			</div>
 			<div>
 				<a th:href="@{/invoices/{inv_id}/edit(inv_id = ${inv.id})}"
@@ -73,7 +73,7 @@
 			<div></div>
 			<div></div>
 			<div th:with="totalSum=${#aggregates.sum(invoices.![totalAmount])}" class="txt-right">
-				<span th:text="${#numbers.formatDecimal(totalSum,3,'POINT',2,'COMMA')}">0,00</span>
+				<span th:text="${#numbers.formatDecimal(totalSum,1,'POINT',2,'COMMA')}">0,00</span>
 			</div>
 			<div></div>
 		</li>

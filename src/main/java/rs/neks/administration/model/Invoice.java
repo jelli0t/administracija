@@ -61,7 +61,7 @@ public class Invoice {
 	
 	private String description;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy="invoice")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy="invoice")
 	private List<Payment> payments;
 	
 

@@ -39,7 +39,7 @@ public interface InvoiceDao {
 	 * @param endDate
 	 * @param customer
 	 * */
-	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer);
+	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer, boolean withPayment);
 	
 	/**
 	 * Cuva novu instancu ili radi merge za postojecu.

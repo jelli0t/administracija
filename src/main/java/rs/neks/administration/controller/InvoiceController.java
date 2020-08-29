@@ -49,7 +49,7 @@ public class InvoiceController {
 	public String defaultOverview(Model model) {
 		final LocalDateTime from = DateUtils.makeOrDefault(0, 0, 1);
 		final LocalDateTime to = from.plusMonths(1);
-		List<Invoice> invoices = invoiceService.findAll(from, to, null);
+		List<Invoice> invoices = invoiceService.findAll(from, to, null, false);
 		model.addAttribute("invoices", invoices);
 		model.addAttribute("month", from.getMonthValue());
 		model.addAttribute("year", from.getYear());
@@ -63,7 +63,7 @@ public class InvoiceController {
 		}
 		final LocalDateTime from = DateUtils.makeOrDefault(year.get(), 1, 1);
 		final LocalDateTime to = from.plusYears(1);
-		List<Invoice> invoices = invoiceService.findAll(from, to, null);
+		List<Invoice> invoices = invoiceService.findAll(from, to, null, false);
 		model.addAttribute("invoices", invoices);
 		model.addAttribute("year", from.getYear());
 		return "invoices";
@@ -76,7 +76,7 @@ public class InvoiceController {
 			Model model) {
 		final LocalDateTime from = DateUtils.makeOrDefault(year.orElse(0), month.orElse(0), 1);
 		final LocalDateTime to = from.plusMonths(1);
-		List<Invoice> invoices = invoiceService.findAll(from, to, null);
+		List<Invoice> invoices = invoiceService.findAll(from, to, null, false);
 		model.addAttribute("invoices", invoices);
 		return "fragment/invoice :: overview";
 	}

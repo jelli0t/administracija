@@ -40,7 +40,7 @@ public interface InvoiceService {
 	/**
 	 * 
 	 * */
-	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer);
+	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer, boolean withPayments);
 	
 	/**
 	 * 

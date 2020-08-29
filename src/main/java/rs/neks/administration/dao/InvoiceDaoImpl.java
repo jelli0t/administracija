@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 import rs.neks.administration.model.Customer;
 import rs.neks.administration.model.Invoice;
-import rs.neks.administration.util.TextUtils;
 
 @Repository(value = "invoiceDao")
 @Transactional
@@ -67,15 +66,17 @@ public class InvoiceDaoImpl implements InvoiceDao {
 	
 	
 	@Override
-	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer) {
-		List<Invoice> invoices = null;
-		String HQL = "from rs.neks.administration.model.Invoice where 1 = 1"
-				+ Optional.ofNullable(startDate).map(x -> " and createdOn >= :start_date").orElse(TextUtils.EMPTY)
-				+ Optional.ofNullable(endDate).map(x -> " and createdOn < :end_date").orElse(TextUtils.EMPTY)
-				+ Optional.ofNullable(customer).map(x -> " and customer = :customer").orElse(TextUtils.EMPTY)
-				+ " order by createdOn";
+	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer, boolean withPayments) {
+		List<Invoice> invoices = null;		
+		StringBuilder queryBuilder = new StringBuilder("from rs.neks.administration.model.Invoice inv")
+//				.append(withPayments ? " join fetch inv.payments" : TextUtils.EMPTY)
+				.append(" where 1 = 1");
+		Optional.ofNullable(startDate).ifPresent(x -> queryBuilder.append(" and inv.createdOn >= :start_date"));
+		Optional.ofNullable(endDate).ifPresent(x -> queryBuilder.append(" and inv.createdOn < :end_date"));
+		Optional.ofNullable(customer).ifPresent(x -> queryBuilder.append(" and inv.customer = :customer"));
+		queryBuilder.append(" order by inv.createdOn");			
 		try {		
-			Query query = sessionFactory.getCurrentSession().createQuery(HQL);
+			Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 			Optional.ofNullable(startDate).ifPresent(x -> { query.setParameter("start_date", x); });
 			Optional.ofNullable(endDate).ifPresent(x -> { query.setParameter("end_date", x); });
 			Optional.ofNullable(customer).ifPresent(x -> { query.setParameter("customer", x); });

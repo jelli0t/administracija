@@ -52,13 +52,13 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 	
 	@Override
-	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer) {
-		return invoiceDao.findAll(startDate, endDate, customer);
+	public List<Invoice> findAll(LocalDateTime startDate, LocalDateTime endDate, Customer customer, boolean withPayments) {
+		return invoiceDao.findAll(startDate, endDate, customer, withPayments);
 	}
 	
 	@Override
 	public List<Invoice> findAllSortedByCustomer(LocalDateTime startDate, LocalDateTime endDate) {
-		List<Invoice> invoices = invoiceDao.findAll(startDate, endDate, null);
+		List<Invoice> invoices = invoiceDao.findAll(startDate, endDate, null, true);
 		if(invoices != null && invoices.size() > 0) {
 			invoices = invoices.stream()
 					.sorted(Comparator.comparingInt(i -> i.getCustomer().getId()))
