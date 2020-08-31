@@ -55,8 +55,13 @@
 			<div>
 				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
 					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
-					<span>Uplate</span>	
-				</a>				
+					<img alt="Uplate" th:src="@{/resources/img/money_paper.svg}" height="22" data-title="Pregled uplata">
+				</a>
+				&ensp;
+				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+					<img alt="Uplate" th:src="@{/resources/img/invoice.svg}" height="20" data-title="Pregled uplata">
+				</a>			
 			</div>
 		</li>
 		<li class="tr-li">
@@ -64,7 +69,7 @@
 			<div></div>
 			<div></div>
 			<div></div>
-			<div th:with="totalSum=${#aggregates.sum(invoices.![totalAmount])}" class="txt-right">
+			<div th:with="totalSum=${#aggregates.sum(invoices.![totalAmount])}" class="sum-td txt-right">
 				<span th:text="${#numbers.formatDecimal(totalSum,1,'POINT',2,'COMMA')}">0,00</span>
 			</div>
 			<div></div>
@@ -81,14 +86,16 @@
 	<div class="popup-box">
 		<div class="popup-box-header">
 			<span>Pregled uplata</span>
+			<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">X</button>
 		</div>
-		<ul class="table-ul">
-			<li class="tr-li trh-li">
-				<div>R.br.</div>
-				<div>Datum uplate</div>
-				<div>Iznos</div>
-			</li>
-			<th:block th:unless="${#lists.isEmpty(payments)}" >
+		<th:block th:unless="${#lists.isEmpty(payments)}" >
+			<ul class="table-ul">
+				<li class="tr-li trh-li">
+					<div>R.br.</div>
+					<div>Datum uplate</div>
+					<div>Iznos</div>
+					<div></div>
+				</li>			
 				<li th:each="pay, stat : ${payments}" class="tr-li" th:id="${'paid_row_' + pay.id}"
 					th:classappend="${stat.odd} ? 'tr-odd' : ''">
 					<div>
@@ -103,32 +110,37 @@
 					<div>
 						<a th:href="@{/billings/invoices/{inv_id}/payments/{pay_id}/edit(inv_id=${pay.invoice.id}, pay_id=${pay.id})}"
 							onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
-							<span>Izmeni</span>	
-						</a>				
+							<img alt="Izmeni" th:src="@{/resources/img/edit.svg}" height="18">	
+						</a>	
+						&ensp;
+						<a th:href="@{/billings/invoices/{inv_id}/payments/{pay_id}/edit(inv_id=${pay.invoice.id}, pay_id=${pay.id})}"
+							onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+							<img alt="Obriši" th:src="@{/resources/img/delete.svg}" height="18">	
+						</a>			
 					</div>
 				</li>
 				<li class="tr-li">
 					<div></div>
 					<div></div>
-					<div th:with="totalSum=${#aggregates.sum(payments.![amount])}" class="txt-right">
+					<div th:with="totalSum=${#aggregates.sum(payments.![amount])}" class="sum-td txt-right">
 						<span th:text="${#numbers.formatDecimal(totalSum,1,'POINT',2,'COMMA')}">0,00</span>
 					</div>
 					<div></div>
-				</li>
-			</th:block>
-			<th:block th:if="${#lists.isEmpty(payments)}">
-				<li class="tr-li">
-					<div style="display: block;">Nema uplata</div>
-				</li>
-			</th:block>
-		</ul>
-		<div>
-			<a href="javascript:;" class="bttn" onclick="event.preventDefault(); javascript:closePopup();">
+				</li>			
+			</ul>
+		</th:block>
+		<th:block th:if="${#lists.isEmpty(payments)}">
+			<div class="x-1em-padding y-1em-padding">
+				<h3>Još uvek nemate uplata po ovoj fakturi.</h3>
+			</div>
+		</th:block>
+		<div class="x-1em-padding y-1em-padding txt-right">
+			<button class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
 				<span>Odustani</span>
-			</a>
+			</button>
 			&emsp;
 			<a th:href="@{/billings/invoices/{inv_id}/payments/add(inv_id=${invoice.id})}"
-				onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');" class="bttn bttn-ok">
+				onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');" class="bttn-3d bttn-3d-ok">
 				<span>+ Unesi uplatu</span>	
 			</a>
 		</div>
@@ -139,7 +151,8 @@
 <div th:fragment="payment" class="overlay">		
 	<div class="popup-box">
 		<div class="popup-box-header">
-			<span th:text="${invoice?.id != null ? 'Izmena uplate na fakturi' : 'Nova uplata na fakturi'}"></span>
+			<span th:text="${invoice?.id != null ? 'Izmena uplate na fakturi' : 'Nova uplata na fakturi'}"></span>			
+			<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">X</button>
 		</div>
 		<!-- 			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');" -->
 		<form th:action="@{/billings/payments/save}" th:object="${payment}" method="post" name="add_or_edit_payment_form"
@@ -168,8 +181,9 @@
 				<tr>
 					<td colspan="2" class="y-1em-padding txt-right">
 						<input type="hidden" th:field="*{id}">							
-						<input type="button" value="Odustani" class="bttn" onclick="event.preventDefault(); javascript:closePopup();">
-						<input type="submit" value="Sacuvaj" class="bttn bttn-ok">
+						<input type="button" value="Odustani" class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
+						&emsp;
+						<input type="submit" value="Saćuvaj" class="bttn-3d bttn-3d-ok">
 					</td>
 				</tr>
 			</table>		
@@ -177,5 +191,21 @@
 	</div>
 </div>
 
+
+<section th:fragment="remove_confirm" class="overlay">
+	<div class="popup-box">
+		<div class="popup-box-header">
+			<span>Brisanje uplate</span>
+			<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">x</button>
+		</div>
+		<div>
+			Da li ste sigurni?
+			
+			<a href="#" class="bttn-3d bttn-3d-ok">
+				<span>Obriši</span>
+			</a>		
+		</div>
+	</div>
+</section>
 
 </html>

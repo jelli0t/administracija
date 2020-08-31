@@ -4,6 +4,8 @@
 package rs.neks.administration.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,6 +57,19 @@ public class InvoiceController {
 		model.addAttribute("year", from.getYear());
 		return "invoices";
 	}
+	
+	
+	@RequestMapping(path = "/id/{invoiceId}", method = RequestMethod.GET)
+	public String invoiceOverview(@PathVariable Integer invoiceId, Model model) {
+		Invoice invoice = invoiceService.findById(invoiceId);
+		if(invoice != null) {			
+			model.addAttribute("invoices", Arrays.asList( invoice ));
+			model.addAttribute("month", invoice.getCreatedOn().getMonthValue());
+			model.addAttribute("year", invoice.getCreatedOn().getYear());
+		}
+		return "invoices";
+	}
+	
 	
 	@RequestMapping(path = "/year/{year}", method = RequestMethod.PUT)
 	public String switchYear(@PathVariable Optional<Integer> year, Model model) {

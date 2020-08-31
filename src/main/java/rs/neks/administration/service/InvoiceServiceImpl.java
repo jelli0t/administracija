@@ -83,6 +83,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 	
 	@Override
+	public Payment findPaymentById(Integer paymentId) {
+		if(paymentId == null) {
+			return null;
+		}
+		return paymentDao.findById(paymentId);
+	}
+	
+	@Override
 	public boolean savePayment(Payment payment) {
 		if(payment == null) {
 			return false;

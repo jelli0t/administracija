@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import rs.neks.administration.util.DateUtils;
@@ -35,6 +36,7 @@ public class Payment implements Idable {
 	private LocalDateTime paymentDate;
 	
 	@NotNull(message = "Molimo unesite iznos uplate")
+	@Min(value = 1, message = "Molimo unesite iznos uplate")
 	private Double amount;
 	
 	@ManyToOne

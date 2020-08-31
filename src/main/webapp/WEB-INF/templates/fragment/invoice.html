@@ -57,7 +57,7 @@
 			<div>
 				<a th:href="@{/invoices/{inv_id}/edit(inv_id = ${inv.id})}"
 					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
-					<span>Edit</span>	
+					<img alt="Izmeni" th:src="@{/resources/img/edit.svg}" height="18">
 				</a>
 				
 				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
@@ -72,7 +72,7 @@
 			<div></div>
 			<div></div>
 			<div></div>
-			<div th:with="totalSum=${#aggregates.sum(invoices.![totalAmount])}" class="txt-right">
+			<div th:with="totalSum=${#aggregates.sum(invoices.![totalAmount])}" class="sum-td txt-right">
 				<span th:text="${#numbers.formatDecimal(totalSum,1,'POINT',2,'COMMA')}">0,00</span>
 			</div>
 			<div></div>
@@ -84,6 +84,7 @@
 		<div class="popup-box">
 			<div class="popup-box-header">
 				<span th:text="${invoice?.id != null ? 'Izmena fakture' : 'Nova faktura'}"></span>
+				<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">X</button>
 			</div>
 			<form th:action="@{/invoices/save}" th:object="${invoice}" method="post" name="add_or_edit_invoice_form"
 				onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');"

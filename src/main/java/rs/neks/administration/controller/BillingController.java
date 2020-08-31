@@ -96,16 +96,20 @@ public class BillingController {
 		} else {
 			boolean saved = invoiceService.savePayment(payment);
 			Invoice paidInvoice = payment.getInvoice();
-//			redirectAttributes.addAttribute("invoice", paidInvoice);
+			redirectAttributes.addFlashAttribute("invoice", paidInvoice);
 		}			
 		return "redirect:/billings";
 	}
 	
 	
 	@RequestMapping(path = "/payments/remove/{paymentId}", method = RequestMethod.GET)
-	public String removePaymentPrepare(@PathVariable Integer paymentId) {
-		
-		return "";
+	public String removePaymentPrepare(@PathVariable Integer paymentId, Model model) {
+		Payment payment = invoiceService.findPaymentById(paymentId);
+		if(payment == null) {
+			return "redirect:/billings";
+		}
+		model.addAttribute("payment", payment);
+		return "fragment/billing :: remove_confirm";
 	}
 	
 	

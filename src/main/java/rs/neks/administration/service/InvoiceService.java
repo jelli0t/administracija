@@ -61,8 +61,16 @@ public interface InvoiceService {
 	 * */
 	public boolean checkIfInvoiceNoIsUnique(String invoiceNo);
 
+	
+	/**
+	 * Find Payment entity by ID.
+	 * 
+	 * @param paymentId
+	 * */
+	public Payment findPaymentById(Integer paymentId);
+	
 	/**
 	 * 
 	 * */
-	public boolean savePayment(Payment payment);	
+	public boolean savePayment(Payment payment);
 }
