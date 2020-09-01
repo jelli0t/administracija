@@ -25,7 +25,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @ComponentScan(basePackages = {"rs.neks.administration.dao", "rs.neks.administration.service"})
-@PropertySource({"classpath:datasource.properties"})
+//@PropertySource({"classpath:datasource.properties"})
+@PropertySource({"classpath:variables.properties"})
+@PropertySource(value = "${application.prop.file}", ignoreResourceNotFound = true)
 @EnableTransactionManagement
 public class DatasourceConfiguration {
 	
@@ -33,7 +35,9 @@ public class DatasourceConfiguration {
 	private Environment env;
 	
 	@Bean(name = "dataSource")
-	public DataSource getDataSource(){
+	public DataSource getDataSource() {
+		System.out.println("extern prop file: " + env.getProperty("application.prop.file"));
+		
 		BasicDataSource dataSource = new BasicDataSource();
 		dataSource.setDriverClassName(env.getProperty("mysql.driver.classname"));
 		dataSource.setUrl(env.getProperty("mysql.url"));

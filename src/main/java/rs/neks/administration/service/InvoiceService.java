@@ -73,4 +73,10 @@ public interface InvoiceService {
 	 * 
 	 * */
 	public boolean savePayment(Payment payment);
+	
+	/**
+	 * @param paymentId
+	 * */
+	public boolean removePaymentById(Integer paymentId);
+	
 }

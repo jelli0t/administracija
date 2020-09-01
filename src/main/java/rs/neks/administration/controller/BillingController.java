@@ -15,6 +15,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,11 +26,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import rs.neks.administration.model.Customer;
 import rs.neks.administration.model.Invoice;
 import rs.neks.administration.model.Payment;
 import rs.neks.administration.service.CustomerService;
 import rs.neks.administration.service.InvoiceService;
 import rs.neks.administration.util.DateUtils;
+import rs.neks.administration.util.Notification;
 import rs.neks.administration.util.TextUtils;
 
 /**
@@ -51,10 +54,25 @@ public class BillingController {
 		final LocalDateTime from = DateUtils.makeOrDefault(0, 1, 1);
 		final LocalDateTime to = from.plusYears(1);
 		List<Invoice> invoices = invoiceService.findAllSortedByCustomer(from, to);
+		List<Customer> customers = customerService.findAll(true);
 		model.addAttribute("invoices", invoices);
+		model.addAttribute("customers", customers);
 		model.addAttribute("month", from.getMonthValue());
 		model.addAttribute("year", from.getYear());
 		return "billings";
+	}
+	
+	@RequestMapping(path = {"/overview", "/overview/{year}/customer/{customerId}"}, method = RequestMethod.GET)
+	public String prepareBillingsOverview(
+			@PathVariable Optional<Integer> year,
+			@PathVariable Optional<Integer> customerId,
+			Model model) {
+		final LocalDateTime from = DateUtils.makeOrDefault(year.orElse(0), 1, 1);
+		final LocalDateTime to = from.plusYears(1);
+		final Customer customer = customerId.map(id -> customerService.findById(id)).orElse(null);
+		List<Invoice> invoices = invoiceService.findAll(from, to, customer, true);
+		model.addAttribute("invoices", invoices);
+		return "fragment/billing :: overview";
 	}
 	
 	@RequestMapping(path = "/payments/invoice/{invoiceId}", method = RequestMethod.GET)
@@ -95,14 +113,21 @@ public class BillingController {
 			System.out.println("Ima gresaka!");
 		} else {
 			boolean saved = invoiceService.savePayment(payment);
-			Invoice paidInvoice = payment.getInvoice();
+			Notification notification = new Notification(saved, "Uspesno ste uneli uplatu", null);
+			Invoice paidInvoice = invoiceService.findById(payment.getInvoice().getId());
+			LocalDateTime invoiceDate = paidInvoice.getCreatedOn();
 			redirectAttributes.addFlashAttribute("invoice", paidInvoice);
+			redirectAttributes.addFlashAttribute("notification", notification);
+			return new StringBuilder("redirect:/billings/overview/")
+					.append(invoiceDate.getYear()).append("/customer/")
+					.append(paidInvoice.getCustomer().getId())
+					.toString();
 		}			
-		return "redirect:/billings";
+		return "redirect:/billings/overview";
 	}
 	
 	
-	@RequestMapping(path = "/payments/remove/{paymentId}", method = RequestMethod.GET)
+	@RequestMapping(path = "/payments/{paymentId}/remove", method = RequestMethod.GET)
 	public String removePaymentPrepare(@PathVariable Integer paymentId, Model model) {
 		Payment payment = invoiceService.findPaymentById(paymentId);
 		if(payment == null) {
@@ -111,6 +136,17 @@ public class BillingController {
 		model.addAttribute("payment", payment);
 		return "fragment/billing :: remove_confirm";
 	}
+	
+	
+	@RequestMapping(path = "/payments/{paymentId}/remove", method = RequestMethod.DELETE)
+	public String removePayment(@PathVariable Integer paymentId, RedirectAttributes redirectAttributes) {
+		boolean removed = invoiceService.removePaymentById(paymentId);
+		Notification notification = new Notification(removed, "Uspesno ste obrisali uplatu", null);
+		redirectAttributes.addFlashAttribute("notification", notification);
+		redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
+		return "redirect:/billings/overview";
+	}
+	
 	
 	
 	@InitBinder(value = "payment")

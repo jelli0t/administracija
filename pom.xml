@@ -20,6 +20,37 @@
 		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 	</properties>
 
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<properties.file.name>administration-dev.properties</properties.file.name>
+				<properties.file.path>file:/var/www/neks.rs/conf.d</properties.file.path>
+				<project.final.name>dev-administration</project.final.name>
+			</properties>
+		</profile>
+		<profile>
+			<id>stage</id>
+			<properties>
+				<properties.file.name>administration-stage.properties</properties.file.name>
+				<properties.file.path>file:/var/www/neks.rs/conf.d</properties.file.path>
+				<project.final.name>stage-administration</project.final.name>
+			</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<properties>
+				<properties.file.name>administration-prod.properties</properties.file.name>
+				<properties.file.path>file:/var/www/neks.rs/conf.d</properties.file.path>
+				<project.final.name>administration</project.final.name>
+			</properties>
+		</profile>
+	</profiles>
+
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -229,14 +260,14 @@
 			</plugin>
 		</plugins>
 
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
+		 <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 
-		<finalName>administration</finalName>
+		<finalName>${project.final.name}</finalName>
 	</build>
 
 </project>

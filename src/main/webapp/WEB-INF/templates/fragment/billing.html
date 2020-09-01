@@ -12,7 +12,7 @@
 			<script type="text/javascript">
 				setTimeout(function() {
 					$('#action-notification').hide('slow');
-				}, 3000);
+				}, 5000);
 			</script>
 		</div>
 	</th:block>
@@ -29,8 +29,7 @@
 			<div></div>
 		</li>
 		<li th:each="inv, stat : ${invoices}" class="tr-li" th:id="${'inv_row_' + inv.id}"
-			th:classappend="${stat.odd} ? 'tr-odd' : ''"
-			th:style="${invoice?.id == inv.id} ? 'background: yellow;' : ''">
+			th:classappend="|${stat.odd ? 'tr-odd' : ''} ${invoice?.id == inv.id ? 'updated-highlight' : ''}|">
 			<div>
 				<span th:text="${inv.customer.code}"></span>
 			</div>
@@ -52,15 +51,15 @@
 			<div class="txt-right red-txt">
 				<span th:text="${#numbers.formatDecimal(inv.totalAmount - inv.paidAmount, 1, 'POINT',2,'COMMA')}"></span>
 			</div>
-			<div>
+			<div class="x-1em-padding">
 				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
 					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
-					<img alt="Uplate" th:src="@{/resources/img/money_paper.svg}" height="22" data-title="Pregled uplata">
+					<img alt="Uplate" th:src="@{/resources/img/money_coins.svg}" height="24" data-title="Pregled uplata">
 				</a>
 				&ensp;
 				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
 					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
-					<img alt="Uplate" th:src="@{/resources/img/invoice.svg}" height="20" data-title="Pregled uplata">
+					<img alt="Uplate" th:src="@{/resources/img/invoice.svg}" height="24" data-title="Pregled uplata">
 				</a>			
 			</div>
 		</li>
@@ -109,12 +108,14 @@
 					</div>
 					<div>
 						<a th:href="@{/billings/invoices/{inv_id}/payments/{pay_id}/edit(inv_id=${pay.invoice.id}, pay_id=${pay.id})}"
-							onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+							onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');"
+							data-title="Izmeni uplatu">
 							<img alt="Izmeni" th:src="@{/resources/img/edit.svg}" height="18">	
 						</a>	
 						&ensp;
-						<a th:href="@{/billings/invoices/{inv_id}/payments/{pay_id}/edit(inv_id=${pay.invoice.id}, pay_id=${pay.id})}"
-							onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+						<a th:href="@{/billings/payments/{pay_id}/remove(pay_id=${pay.id})}"
+							onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');"
+							data-title="Ubriši uplatu">
 							<img alt="Obriši" th:src="@{/resources/img/delete.svg}" height="18">	
 						</a>			
 					</div>
@@ -141,7 +142,7 @@
 			&emsp;
 			<a th:href="@{/billings/invoices/{inv_id}/payments/add(inv_id=${invoice.id})}"
 				onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');" class="bttn-3d bttn-3d-ok">
-				<span>+ Unesi uplatu</span>	
+				<span><font style="font-size: 1.5em;">+</font> Unesi uplatu</span>	
 			</a>
 		</div>
 	</div>
@@ -159,7 +160,7 @@
 			class="y-1em-padding x-2em-padding">
 			<table>
 				<tr th:with="inv=${invoice}">
-					<td><label for="inv_no" >Broj fakture:</label></td>
+					<td><label for="inv_no" >Broj fakture</label>:</td>
 					<td>
 						<span th:if="${#fields.hasErrors('invoice')}" th:errors="*{invoice.id}" class="fieldError-label"></span>
 						<input type="text" id="inv_no" name="invoice.id" th:value="${inv.id}" class="s-input"
@@ -167,16 +168,19 @@
 					</td>
 				</tr>				
 				<tr>
-					<td><label for="pay_pdate" >Datum uplate:</label></td>
+					<td><label for="pay_pdate" >Datum uplate</label>:</td>
 					<td><input type="date" id="pay_pdate" th:field="*{pickerPaymentDate}" min="2010-01-01" /></td>
 				</tr>			
 				<tr>
-					<td><label for="pay_amount" >Iznos</label></td>
+					<td><label for="pay_amount" >Iznos</label>:</td>
 					<td>
 						<input type="text" id="pay_amount" name="amount" 
 							th:value="${#numbers.formatDecimal(payment.amount,1,'POINT',2,'COMMA')}"
 							class="s-input" style="font-weight: bolder;" />
 					</td>
+				</tr>
+				<tr>
+					<td colspan="2"><br></td>
 				</tr>
 				<tr>
 					<td colspan="2" class="y-1em-padding txt-right">
@@ -199,9 +203,18 @@
 			<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">x</button>
 		</div>
 		<div>
-			Da li ste sigurni?
-			
-			<a href="#" class="bttn-3d bttn-3d-ok">
+			<p th:with="p=${payment}" class="x-1em-padding">
+				Da li ste sigurni da želite da obrišete uplatu <br>
+				za fakturu br. <span th:text="${p.invoice.invoiceNo}"></span>,<br>
+				od dana: <span th:text="${p.paymentDate != null ? #temporals.format(p.paymentDate, 'dd.MM.yyyy') : ''}"></span><br>
+				na iznos <span th:text="${#numbers.formatDecimal(p.amount,1,'POINT',2,'COMMA')}"></span>
+			</p>
+			<button class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
+				<span>Odustani</span>
+			</button>
+			&emsp;
+			<a th:href="@{/billings/payments/{pay_id}/remove (pay_id=${payment.id})}" class="bttn-3d bttn-3d-ok"
+				onclick="event.preventDefault(); deleteItem(this.href, 'main_conetent');">
 				<span>Obriši</span>
 			</a>		
 		</div>

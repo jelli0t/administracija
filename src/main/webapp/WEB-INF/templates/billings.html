@@ -12,17 +12,24 @@
 
 	<main class="fx-box fx-dir-row fx-grow1">
 		<aside>
-		<!--
+		<!--  
+			<select name="customer" id="cust_name" >
+			    <option th:each="cus : ${customers}" 
+			    	th:value="${cus.id}" th:text="${cus.name}"
+			    	th:selected="${cus?.id == invoice?.customer?.id}" >
+			    </option>
+			</select>
+		-->
 			<ul>
-				<li th:each="m, stat : ${T(java.time.Month).values()}" class="tr-li">
-					<a th:href="@{/invoices/overview/{yyyy}/{mm}(yyyy=${year}, mm=${m.getValue()})}"
+				<li th:each="cus, stat : ${customers}" class="tr-li">
+					<a th:href="@{/billings/overview/{yyyy}/customer/{cus_id}(yyyy=2020, cus_id=${cus.id})}"
 						onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');"						
-						th:classappend="${m.getValue() == month} ? 'active' : ''">
-						<span th:text="${m.name()}"></span>
+						th:classappend="${cus?.id == customer?.id} ? 'active' : ''">
+						<span th:text="${cus.name}"></span>
 					</a>					
 				</li>
 			</ul>		
-		 -->
+		
 		</aside>
 		
 		<section id="main_conetent">

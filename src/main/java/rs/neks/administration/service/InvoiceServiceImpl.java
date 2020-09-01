@@ -97,4 +97,14 @@ public class InvoiceServiceImpl implements InvoiceService {
 		}
 		return paymentDao.save(payment);
 	}
+	
+	@Override
+	public boolean removePaymentById(Integer paymentId) {
+		if(paymentId == null) {
+			// TODO loggs
+			return false;
+		}
+		Payment payment = paymentDao.findById(paymentId);
+		return paymentDao.remove(payment);
+	}
 }
