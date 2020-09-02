@@ -11,7 +11,7 @@
 	<header th:replace="fragment/header :: header"></header>
 
 	<main class="fx-box fx-dir-row fx-grow1">
-		<aside>
+		<aside id="aside-left">
 			<ul>
 				<li th:each="m, stat : ${T(java.time.Month).values()}" class="tr-li">
 					<a th:href="@{/invoices/overview/{yyyy}/{mm}(yyyy=${year}, mm=${m.getValue()})}"
@@ -22,7 +22,7 @@
 				</li>
 			</ul>		
 		</aside>
-		<section id="main_conetent">
+		<section id="main_conetent" class="fx-box fx-grow1 fx-justify-cnt">
 
 			<th:block th:include="fragment/invoice :: overview">				
 			</th:block>			

@@ -4,8 +4,20 @@
 		<meta charset="UTF-8">
 	</head>
 	
-	<header th:fragment="header">
-		<h3>LOGO</h3>
+	<header th:fragment="header" class="fx-box fx-dir-row fx-valign-cnt x-2em-padding" id="header">
+	
+		<span>
+			<img alt="Neks" th:src="@{/resources/img/neks_logo_32.png}">
+		</span>
+		
+		<nav class="x-1em-padding">
+			<a th:href="@{/customers}" class="x-1em-padding">Kupci</a>
+			<a th:href="@{/invoices}" class="x-1em-padding">
+				<img alt="Uplate" th:src="@{/resources/img/invoice.svg}" height="22" data-title="Pregled uplata" style="vertical-align: center;">
+				<span>Pregled fakturisanja</span>
+			</a>
+			<a th:href="@{/billings}" class="x-1em-padding">Pregled potraživanja</a>
+		</nav>
 		
 		<select name="year" id="years_selection" >
 		    <option th:each="y : ${#numbers.sequence(2010, 2099)}"

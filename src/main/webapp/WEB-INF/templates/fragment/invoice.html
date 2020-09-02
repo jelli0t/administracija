@@ -120,11 +120,11 @@
 					</tr>
 					<tr>
 						<td><label for="inv_quantity" >Količina:</label></td>
-						<td><input type="text" id="inv_quantity" th:field="*{quantity}" /></td>
+						<td><input type="text" id="inv_quantity" th:field="*{quantity}" class="s-input" /></td>
 					</tr>				
 					<tr>
 						<td><label for="inv_total" >Vrednost (sa PDV):</label></td>
-						<td><input type="text" id="inv_total" th:field="*{totalAmount}" /></td>
+						<td><input type="text" id="inv_total" th:field="*{totalAmount}" class="s-input" /></td>
 					</tr>
 					<tr>
 						<td><label for="cust_note" >Opis:</label></td>
@@ -133,8 +133,8 @@
 					<tr>
 						<td colspan="2" class="y-1em-padding txt-right">
 							<input type="hidden" th:field="*{id}">							
-							<input type="button" value="Odustani" class="bttn" onclick="event.preventDefault(); javascript:closePopup();">
-							<input type="submit" value="Sacuvaj" class="bttn bttn-ok">
+							<input type="button" value="Odustani" class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
+							<input type="submit" value="Sacuvaj" class="bttn-3d bttn-3d-ok">
 						</td>
 					</tr>
 				</table>		

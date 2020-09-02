@@ -19,7 +19,7 @@
 
 	<ul class="table-ul">
 		<li class="tr-li trh-li">
-			<div>Šifra kupca</div>
+			<div>Šifra<br>kupca</div>
 			<div>Naziv kupca</div>
 			<div>Datum fakturisanja</div>
 			<div>Datum dospeća</div>
@@ -87,8 +87,8 @@
 			<span>Pregled uplata</span>
 			<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">X</button>
 		</div>
-		<th:block th:unless="${#lists.isEmpty(payments)}" >
-			<ul class="table-ul">
+		<th:block th:unless="${#lists.isEmpty(payments)}">
+			<ul class="table-ul" style="border: none;">
 				<li class="tr-li trh-li">
 					<div>R.br.</div>
 					<div>Datum uplate</div>

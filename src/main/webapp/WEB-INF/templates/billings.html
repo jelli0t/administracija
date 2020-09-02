@@ -11,15 +11,7 @@
 	<header th:replace="fragment/header :: header"></header>
 
 	<main class="fx-box fx-dir-row fx-grow1">
-		<aside>
-		<!--  
-			<select name="customer" id="cust_name" >
-			    <option th:each="cus : ${customers}" 
-			    	th:value="${cus.id}" th:text="${cus.name}"
-			    	th:selected="${cus?.id == invoice?.customer?.id}" >
-			    </option>
-			</select>
-		-->
+		<aside id="aside-left" class="y-2em-padding">
 			<ul>
 				<li th:each="cus, stat : ${customers}" class="tr-li">
 					<a th:href="@{/billings/overview/{yyyy}/customer/{cus_id}(yyyy=2020, cus_id=${cus.id})}"
@@ -32,7 +24,7 @@
 		
 		</aside>
 		
-		<section id="main_conetent">
+		<section id="main_conetent" class="fx-box fx-grow1 fx-justify-cnt">
 
 			<th:block th:include="fragment/billing :: overview">				
 			</th:block>			

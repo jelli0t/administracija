@@ -3,8 +3,11 @@
  */
 package rs.neks.administration.controller;
 
+import java.beans.PropertyEditorSupport;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +35,7 @@ import rs.neks.administration.service.CustomerService;
 import rs.neks.administration.service.InvoiceService;
 import rs.neks.administration.util.DateUtils;
 import rs.neks.administration.util.Notification;
+import rs.neks.administration.util.TextUtils;
 
 /**
  * @author nemanja
@@ -108,7 +113,7 @@ public class InvoiceController {
 		return new ModelAndView("fragment/invoice :: edit", model, (HttpStatus) model.getAttribute("httpStatus"));
 	}
 	
-	
+
 	@RequestMapping(path = "/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView saveInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingResult, 
 			RedirectAttributes redirectAttributes, ModelMap modelMap) {
@@ -131,5 +136,32 @@ public class InvoiceController {
 		redirectAttributes.addFlashAttribute("notification", notification);
 		redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
 		return new ModelAndView("redirect:/invoices/overview");
+	}
+	
+	
+	@InitBinder(value = "invoice")
+	protected void initBinder(org.springframework.web.bind.WebDataBinder binder) {
+		binder.registerCustomEditor(Double.class, "totalAmount", new PropertyEditorSupport() {
+			
+			@Override
+			public void setAsText(String text) throws IllegalArgumentException {
+				if(TextUtils.notEmpty(text)) {
+					Double value = null;
+					System.out.println("Uneta vrednost: " + text);
+					
+					DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+					symbols.setDecimalSeparator(',');
+					symbols.setGroupingSeparator('.');
+					DecimalFormat decimalFormat = new DecimalFormat("#,##0.###", symbols);					
+					try {
+						value = decimalFormat.parse(text).doubleValue();
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					setValue(value);
+				}
+			}
+		});
 	}
 }

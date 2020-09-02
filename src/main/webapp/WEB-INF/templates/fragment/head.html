@@ -50,14 +50,7 @@
 		
 		
 		function postAndFragmentResult($form, target) {
-// 			var json = {};    
-// 		    $.each($( $form ).serializeArray(), function() {
-// 		    	json[this.name] = this.value;
-// 		    });
-// 		    console.log(JSON.stringify(json));
-
 			var json = $( $form ).serializeObject();
-
 		    console.log(JSON.stringify(json));
 			$.ajax({
 				url: $( $form ).attr('action'),
@@ -78,7 +71,7 @@
 			    console.log( "Error: " + errorThrown );
 			});
 		}
-		
+			
 		$.fn.serializeObject = function serializeObject() {
 	        var o = {};
 	        var a = this.serializeArray();

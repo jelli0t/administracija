@@ -16,18 +16,12 @@ body {
 ul, ol {
 	list-style: none;
 }
+img { border: none; }
+a:link, a:hover { text-decoration: none; }
 
-a:link, a:hover {
-	text-decoration: none;
-}
-
-.txt-left {
-	text-align: left;
-}
-
-.txt-right {
-	text-align: right;
-}
+.txt-left {	text-align: left; }
+.txt-right { text-align: right; }
+.txt-center { text-align: center; }
 
 /* 
  Flex Properties 
@@ -60,6 +54,10 @@ a:link, a:hover {
     -webkit-justify-content: flex-end; /* Safari 6.1+ */
     justify-content: flex-end;
 }
+.fx-justify-spc-around {
+	justify-content: space-around;	
+}	
+
 .fx-valign-cnt {
 	-webkit-align-items: center;
 	align-items: center;
@@ -112,6 +110,7 @@ a:link, a:hover {
   -webkit-align-content: space-between;
   align-content: space-between;
 }
+
 .fx-aligncnt-cnt {
   -webkit-align-content: center;
   align-content: center;
@@ -209,6 +208,24 @@ a:link, a:hover {
 	padding-bottom: 0.5em;
 }
 
+#header {
+	background-color: #fff;
+	height: 48px;
+	border-bottom: 1px solid #edeff1;
+}
+
+nav > a {
+	display: inline-block;
+	line-height: 46px;
+	font-size: 0.875em;
+	font-weight: bolder;
+}
+
+#aside-left {
+	background-color: #fff;
+	border-right: 1px solid #edeff1;
+}
+
 #action-notification {
 	position: fixed;
 	left: 50%;
@@ -228,17 +245,20 @@ a:link, a:hover {
 	display: table;
 	border-collapse: collapse;
 	background-color: #fff;
-    border: 1px solid #ccc;  /* #e1e4e8; */
+    border: 1px solid #ccc;
     border-radius: 6px;
     text-align: center;
+    margin: 32px 0;
 }
 
 .trh-li {
 	font-weight: bolder;
 	text-align: center;
-	font-size: 0.9125em;
+	font-size: 0.875em;
 /* 	background: #f9826c; */
 	background-color: rgba(241, 248, 255, 1);
+	border-bottom: 1px solid #ccc;
+	box-shadow: 0 1px 3px 0 rgba(149, 157, 165, .25);
 }
 
 .tr-li {
@@ -394,12 +414,10 @@ label {
 }
 
 .popup-box-header {
-	background-color: #f1f8ff;
-    border-color: #c8e1ff;
 	padding: 0.75em 1.25em;
     margin: -1px -1px 0;
     background-color: #f6f8fa;
-    border: 1px solid #e1e4e8;
+    border: 1px solid #ccc;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     color: #000;
