@@ -45,6 +45,13 @@ public class CustomerController {
 		return "customers";
 	}
 	
+	@RequestMapping(path = "/overview", method = RequestMethod.GET)
+	public String customersOverview(Model model) {
+		List<Customer> customers = customerService.findAll(true);
+		model.addAttribute("customers", customers);
+		return "fragment/customer :: overview";
+	}
+	
 	@RequestMapping(path = {"/add", "/{id}/edit"}, method = RequestMethod.GET)
 	public ModelAndView prepareCustomerEdit(@PathVariable Optional<Integer> id, ModelMap model) {
 		Customer customer = id.map(x -> customerService.findById(x))
@@ -70,7 +77,7 @@ public class CustomerController {
 		Notification notification = new Notification(result, "Uspesno ste sacuvali podatke o kupcu", null);
 		redirectAttributes.addFlashAttribute("notification", notification);
 		redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
-		return new ModelAndView("redirect:/customers");
+		return new ModelAndView("redirect:/customers/overview");
 	}
 	
 }

@@ -87,6 +87,11 @@
 	            	customer['id'] = this.value || '';
 	            	o[this.name] = customer;
 	            }
+	            else if(this.name === 'invoice'){ 
+	            	var invoice = {};
+	            	invoice['id'] = this.value || '';
+	            	o[this.name] = invoice;
+	            }
 	            else {
 	                o[this.name] = this.value || '';
 	            }

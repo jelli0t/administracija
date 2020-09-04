@@ -16,14 +16,18 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import rs.neks.administration.model.Customer;
@@ -99,6 +103,7 @@ public class BillingController {
 			Payment payment = paymentId.map(id -> {
 					return invoice.getPayments().stream().filter(p -> p.getId() == id).findFirst().orElse(new Payment());
 				}).orElse(new Payment());
+//			Optional.ofNullable(payment).filter(predicate)
 			model.addAttribute("invoice", invoice);
 			model.addAttribute("payment", payment);
 		}
@@ -106,9 +111,9 @@ public class BillingController {
 	}
 	
 	
-	@RequestMapping(path = "/payments/save", method = RequestMethod.POST)
-	public String savePayment(@Valid @ModelAttribute("payment") Payment payment, 
-			BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+	@RequestMapping(path = "/payments/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public String savePayment(@Valid @RequestBody Payment payment, BindingResult bindingResult, 
+			RedirectAttributes redirectAttributes) {
 		if(bindingResult.hasErrors())  {
 			System.out.println("Ima gresaka!");
 		} else {
@@ -125,6 +130,31 @@ public class BillingController {
 		}			
 		return "redirect:/billings/overview";
 	}
+	
+	@RequestMapping(path = "/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ModelAndView saveInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingResult, 
+			RedirectAttributes redirectAttributes, ModelMap modelMap) {
+		if (bindingResult.hasErrors()) {
+			modelMap.addAttribute("invoice", invoice);
+			modelMap.addAttribute("httpStatus", HttpStatus.BAD_REQUEST);
+			modelMap.addAllAttributes(bindingResult.getModel());
+//			return prepareInvoiceEdit(Optional.empty(), modelMap);
+		}
+//		else if(invoice.getId() == null && TextUtils.notEmpty(invoice.getInvoiceNo())) {
+//			boolean isInvoiceNoUnique = invoiceService.checkIfInvoiceNoIsUnique(invoice.getInvoiceNo());
+//			if(!isInvoiceNoUnique) {
+//				bindingResult.addError( new ObjectError("invoiceNo", "Faktura pod ovim brojem vec postoji!"));
+//				model.addAttribute("invoiceNo", "Faktura pod ovim brojem vec postoji!");
+//				return prepareInvoiceEdit(Optional.empty(), model);
+//			}				
+//		}
+		boolean result = invoiceService.save(invoice);
+		Notification notification = new Notification(result, "Uspesno ste sacuvali podatke o kupcu", null);
+		redirectAttributes.addFlashAttribute("notification", notification);
+		redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
+		return new ModelAndView("redirect:/invoices/overview");
+	}
+	
 	
 	
 	@RequestMapping(path = "/payments/{paymentId}/remove", method = RequestMethod.GET)
@@ -148,30 +178,4 @@ public class BillingController {
 	}
 	
 	
-	
-	@InitBinder(value = "payment")
-	protected void initBinder(org.springframework.web.bind.WebDataBinder binder) {
-		binder.registerCustomEditor(Double.class, "amount", new PropertyEditorSupport() {
-			
-			@Override
-			public void setAsText(String text) throws IllegalArgumentException {
-				if(TextUtils.notEmpty(text)) {
-					Double value = null;
-					System.out.println("Uneta vrednost: " + text);
-					
-					DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-					symbols.setDecimalSeparator(',');
-					symbols.setGroupingSeparator('.');
-					DecimalFormat decimalFormat = new DecimalFormat("#,##0.###", symbols);					
-					try {
-						value = decimalFormat.parse(text).doubleValue();
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					setValue(value);
-				}
-			}
-		});
-	}
 }

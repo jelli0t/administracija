@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="fragment/head :: head( ~{::title} )">
-	<meta charset="UTF-8">
-	<title>Kupci</title>
-</head>
-
 <section th:fragment="overview">
+
 	<th:block th:if="${notification != null}">
 		<div id="action-notification" th:class="${notification.affirmative ? 'affirmative' : 'failure'}">
 			<span class="x-1em-padding y-05em-padding" th:text="${notification.message}"></span>
@@ -18,18 +14,19 @@
 		</div>
 	</th:block>
 	
-	<div>
-		<a th:href="@{/invoices/add}" onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
-			<span>Nova faktura</span>	
-		</a>
-	</div>
 
 	<ul class="table-ul">
 		<li class="tr-li trh-li">
-			<div>Naziv kupca</div>
-			<div>Broj fakture</div>
-			<div>Datum fakturisanja</div>
-			<div>Datum dospeća</div>
+			<div>
+				<a th:href="@{/invoices/add}" class="bttn-3d bttn-3d-xs bttn-3d-ok"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+					<span><font style="font-size: 1.75em;">+</font></span>	
+				</a>
+			</div>
+			<div th:text="${#messages.msg('customer.name')}">Naziv kupca</div>
+			<div th:text="${#messages.msg('invoice.no')}">Broj fakture</div>
+			<div th:text="${#messages.msg('date.invoicing')}">Datum fakturisanja</div>
+			<div th:text="${#messages.msg('date.due.for.payment')}">Datum dospeća</div>
 			<div>Otpremljena<br>Količina</div>
 			<div>Fakturisna vrednost<br>(sa PDV)</div>
 			<div></div>
@@ -37,6 +34,9 @@
 		<li th:each="inv, stat : ${invoices}" class="tr-li" th:id="${'inv_row_' + inv.id}"
 			th:classappend="${stat.odd} ? 'tr-odd' : ''">
 			<div>
+				<span th:text="${#strings.concat(stat.count, '.')}" class="ordinal"></span>				
+			</div>
+			<div class="black-txt">
 				<span th:text="${inv.customer.name}"></span>
 			</div>
 			<div>
@@ -54,20 +54,35 @@
 			<div class="txt-right">
 				<span th:text="${#numbers.formatDecimal(inv.totalAmount,1,'POINT',2,'COMMA')}"></span>
 			</div>
-			<div>
+			<div class="x-1em-padding">
 				<a th:href="@{/invoices/{inv_id}/edit(inv_id = ${inv.id})}"
-					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');"
+					th:attr="data-title=${'Izmeni fakturu'}" class="hover-title">
 					<img alt="Izmeni" th:src="@{/resources/img/edit.svg}" height="18">
 				</a>
-				
+				&ensp;
+				<a th:href="@{/invoices/{inv_id}/remove(inv_id = ${inv.id})}"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');"
+					th:attr="data-title=${'Obriši fakturu'}" class="hover-title">
+					<img alt="Obriši" th:src="@{/resources/img/delete.svg}" height="18">	
+				</a>
+				<!-- 
 				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
 					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
 					<span>Uplate</span>	
-				</a>			
+				</a>
+				 -->			
 			</div>
 		</li>
 		<li class="tr-li">
 			<div></div>
+			<div>
+				<a th:href="@{/invoices/add}" class="bttn-3d bttn-3d-xs bttn-3d-ok"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+					<font style="font-size: 1.33em;">+</font>
+					<span th:text="${#messages.msg('new.invoice')}">Nova faktura</span>	
+				</a>
+			</div>
 			<div></div>
 			<div></div>
 			<div></div>
@@ -78,6 +93,15 @@
 			<div></div>
 		</li>
 	</ul>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+		var month = /*[[${month}]]*/
+		console.log('passed month: ' + month);
+		$.each($('.mount-nav'), function(i, value) {
+			$(this).toggleClass('highlighted', ++i === month);		
+		});
+	/*]]>*/
+	</script>
 </section>
 
 	<div th:fragment="edit" class="overlay">		
@@ -104,27 +128,31 @@
 						</td>
 					</tr>
 					<tr>
-						<td><label for="inv_no" >Broj fakture:</label></td>
+						<td><label for="inv_no" th:text="${#messages.msg('invoice.no')}">Broj fakture:</label></td>
 						<td>
 							<span th:if="${#fields.hasErrors('invoiceNo')}" th:errors="*{invoiceNo}" class="fieldError-label"></span>
-							<input type="text" id="inv_no" th:field="*{invoiceNo}" th:class="${#fields.hasErrors('invoiceNo')}? fieldError"  />
+							<input type="text" id="inv_no" th:field="*{invoiceNo}" class="s-input"
+								th:classappend="${#fields.hasErrors('invoiceNo')}? fieldError"  />
 						</td>
 					</tr>				
 					<tr>
-						<td><label for="inv_cdate" >Datum fakturisanja:</label></td>
+						<td><label for="inv_cdate"><span th:text="${#messages.msg('date.invoicing')}"></span>:</label></td>
 						<td><input type="date" id="inv_cdate" th:field="*{pickerCreatedOn}" min="2010-01-01" /></td>
 					</tr>
 					<tr>
-						<td><label for="inv_due_date" >Datum dospeca:</label></td>
+						<td><label for="inv_due_date"><span th:text="${#messages.msg('date.due.for.payment')}">Datum dospeca</span>:</label></td>
 						<td><input type="date" id="inv_due_date" th:field="*{pickerDueForPayment}" min="2010-01-01" /></td>
 					</tr>
 					<tr>
 						<td><label for="inv_quantity" >Količina:</label></td>
-						<td><input type="text" id="inv_quantity" th:field="*{quantity}" class="s-input" /></td>
+						<td><input type="text" id="inv_quantity" th:field="*{quantity}" class="s-input" autocomplete="off" /></td>
 					</tr>				
 					<tr>
 						<td><label for="inv_total" >Vrednost (sa PDV):</label></td>
-						<td><input type="text" id="inv_total" th:field="*{totalAmount}" class="s-input" /></td>
+						<td>
+							<span th:if="${#fields.hasErrors('totalAmount')}" th:errors="*{totalAmount}" class="fieldError-label"></span>
+							<input type="text" id="inv_total" th:field="*{totalAmount}" class="m-input" autocomplete="off" style="font-weight: bolder;" />
+						</td>
 					</tr>
 					<tr>
 						<td><label for="cust_note" >Opis:</label></td>

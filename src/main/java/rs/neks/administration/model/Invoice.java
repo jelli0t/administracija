@@ -4,8 +4,10 @@
 package rs.neks.administration.model;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +22,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import rs.neks.administration.util.AmountDeserializer;
 import rs.neks.administration.util.DateUtils;
 import rs.neks.administration.util.TextUtils;
 
@@ -57,6 +62,8 @@ public class Invoice {
 	private LocalDateTime dueForPayment;
 	
 	@Column(name = "total_amount")
+	@NotNull(message = "Molimo unesite iznas na koji fakturisete")
+	@JsonDeserialize(using = AmountDeserializer.class)
 	private Double totalAmount;
 	
 	private String description;
@@ -145,8 +152,8 @@ public class Invoice {
 		}			
 	}
 	
-	public Double getTotalAmount() {
-		return totalAmount;
+	public Double getTotalAmount() {		
+		return Optional.ofNullable(this.totalAmount).orElse(0d);
 	}
 
 	public void setTotalAmount(Double totalAmount) {
@@ -164,8 +171,7 @@ public class Invoice {
 	public List<Payment> getPayments() {
 		return payments;
 	}
-	
-	
+		
 	public Double getPaidAmount() {
 		if(this.payments != null && payments.size() > 0) {
 			return payments.stream().mapToDouble(Payment::getAmount).sum();
@@ -173,4 +179,14 @@ public class Invoice {
 		return 0d;
 	}
 	
+	public LocalDateTime getLastPaymentDate() {
+		if(this.payments != null && payments.size() > 0) {
+			return payments.stream().filter(p -> p.getPaymentDate() != null)
+					.map(Payment::getPaymentDate)
+					.sorted(Comparator.nullsLast(
+				     (pd1, pd2) -> pd2.compareTo(pd1)))					
+					.findFirst().orElse(null);
+		}
+		return null;
+	} 
 }

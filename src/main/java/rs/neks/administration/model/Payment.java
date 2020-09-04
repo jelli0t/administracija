@@ -17,6 +17,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import rs.neks.administration.util.AmountDeserializer;
 import rs.neks.administration.util.DateUtils;
 import rs.neks.administration.util.TextUtils;
 
@@ -37,6 +40,7 @@ public class Payment implements Idable {
 	
 	@NotNull(message = "Molimo unesite iznos uplate")
 	@Min(value = 1, message = "Molimo unesite iznos uplate")
+	@JsonDeserialize(using = AmountDeserializer.class)
 	private Double amount;
 	
 	@ManyToOne

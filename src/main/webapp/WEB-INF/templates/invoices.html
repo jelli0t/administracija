@@ -3,7 +3,7 @@
 
 <head th:replace="fragment/head :: head( ~{::title} )">
 	<meta charset="UTF-8">
-	<title>Pregled Fakturisanja</title>
+	<title th:text="${#messages.msg('invoices.overview')}">Pregled Fakturisanja</title>
 </head>
 
 
@@ -12,12 +12,11 @@
 
 	<main class="fx-box fx-dir-row fx-grow1">
 		<aside id="aside-left">
-			<ul>
-				<li th:each="m, stat : ${T(java.time.Month).values()}" class="tr-li">
+			<ul class="table-ul y-2em-padding">
+				<li th:each="m, stat : ${T(java.time.Month).values()}" class="tr-li mount-nav">
 					<a th:href="@{/invoices/overview/{yyyy}/{mm}(yyyy=${year}, mm=${m.getValue()})}"
-						onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');"						
-						th:classappend="${m.getValue() == month} ? 'active' : ''">
-						<span th:text="${m.name()}"></span>
+						onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
+						<span th:text="${#messages.msg(m.name().toLowerCase())}"></span>
 					</a>					
 				</li>
 			</ul>		
@@ -25,7 +24,7 @@
 		<section id="main_conetent" class="fx-box fx-grow1 fx-justify-cnt">
 
 			<th:block th:include="fragment/invoice :: overview">				
-			</th:block>			
+			</th:block>
 					
 		</section>
 	

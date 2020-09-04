@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -89,6 +90,7 @@ public class InvoiceController {
 		return "invoices";
 	}
 
+	
 	@RequestMapping(path = {"/overview", "/overview/{year}/{month}"}, method = RequestMethod.GET)
 	public String prepareInvoiceOverview(
 			@PathVariable Optional<Integer> year, 
@@ -98,6 +100,7 @@ public class InvoiceController {
 		final LocalDateTime to = from.plusMonths(1);
 		List<Invoice> invoices = invoiceService.findAll(from, to, null, false);
 		model.addAttribute("invoices", invoices);
+		model.addAttribute("month", from.getMonthValue());
 		return "fragment/invoice :: overview";
 	}
 	
@@ -123,19 +126,15 @@ public class InvoiceController {
 			modelMap.addAllAttributes(bindingResult.getModel());
 			return prepareInvoiceEdit(Optional.empty(), modelMap);
 		}
-//		else if(invoice.getId() == null && TextUtils.notEmpty(invoice.getInvoiceNo())) {
-//			boolean isInvoiceNoUnique = invoiceService.checkIfInvoiceNoIsUnique(invoice.getInvoiceNo());
-//			if(!isInvoiceNoUnique) {
-//				bindingResult.addError( new ObjectError("invoiceNo", "Faktura pod ovim brojem vec postoji!"));
-//				model.addAttribute("invoiceNo", "Faktura pod ovim brojem vec postoji!");
-//				return prepareInvoiceEdit(Optional.empty(), model);
-//			}				
-//		}
 		boolean result = invoiceService.save(invoice);
+		final LocalDateTime created = invoice.getCreatedOn();	
 		Notification notification = new Notification(result, "Uspesno ste sacuvali podatke o kupcu", null);
 		redirectAttributes.addFlashAttribute("notification", notification);
 		redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
-		return new ModelAndView("redirect:/invoices/overview");
+		StringBuilder uriBuilder = new StringBuilder("redirect:/invoices/overview");
+		Optional.ofNullable(created).ifPresent(c -> uriBuilder.append("/").append(c.getYear()));
+		Optional.ofNullable(created).ifPresent(c -> uriBuilder.append("/").append(c.getMonthValue()));
+		return new ModelAndView(uriBuilder.toString());
 	}
 	
 	

@@ -7,16 +7,22 @@
 </head>
 
 
-<body>	
+<body class="fx-box fx-dir-col">
 	<header th:replace="fragment/header :: header"></header>
+	<main class="fx-box fx-dir-row fx-grow1">
+		<aside id="aside-left">
+			<ul>
+<!-- 				th:text="${T(java.lang.Character).forDigit(i, 10)}" -->
+				<li th:each="i: ${#numbers.sequence(65, 90)}">
+					<a th:text="${T(java.lang.Character).forDigit(i, 10)}"></a>
+				</li>
+			</ul>
+		</aside>
 
-
-	<section id="main_conetent" class="fx-box fx-grow1 fx-justify-cnt">
-	
-		<div th:insert="fragment/customer :: overview"></div>
-		
-	</section>
-		
+		<section id="main_conetent" class="fx-box fx-grow1 fx-justify-cnt">		
+			<div th:insert="fragment/customer :: overview"></div>			
+		</section>
+	</main>		
 	<footer th:replace="fragment/footer :: footer"></footer>
 </body>
 </html>

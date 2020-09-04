@@ -19,23 +19,29 @@
 
 	<ul class="table-ul">
 		<li class="tr-li trh-li">
-			<div>Šifra<br>kupca</div>
-			<div>Naziv kupca</div>
+			<div></div>
+<!-- 			<div>Šifra<br>kupca</div> -->
+<!-- 			<div>Naziv kupca</div> -->
 			<div>Datum fakturisanja</div>
 			<div>Datum dospeća</div>
 			<div>Fakturisna vrednost<br>(sa PDV)</div>
-			<div>Plaćeno</div>
+			<div>Plaćeni iznos</div>
+			<div>Plaćeno dana</div>
 			<div>Ostatak Duga</div>
 			<div></div>
 		</li>
 		<li th:each="inv, stat : ${invoices}" class="tr-li" th:id="${'inv_row_' + inv.id}"
 			th:classappend="|${stat.odd ? 'tr-odd' : ''} ${invoice?.id == inv.id ? 'updated-highlight' : ''}|">
-			<div>
-				<span th:text="${inv.customer.code}"></span>
+			<div th:text="${#strings.concat(stat.count, '.')}" class="ordinal"
+				th:classappend="${stat.first ? 'show-customer' : ''}" 
+				th:attr="data-customer=${#strings.concat('#', inv.customer.code, ': ', inv.customer.name)}">
 			</div>
-			<div>
-				<span th:text="${inv.customer.name}"></span>
-			</div>
+<!-- 			<div> -->
+<!-- 				<span th:text="${inv.customer.code}"></span> -->
+<!-- 			</div> -->
+<!-- 			<div> -->
+<!-- 				<span th:text="${inv.customer.name}"></span> -->
+<!-- 			</div> -->
 			<div class="date-value">
 				<span th:text="${inv.createdOn != null ? #temporals.format(inv.createdOn, 'dd.MM.yyyy') : ''}"></span>
 			</div>
@@ -45,34 +51,48 @@
 			<div class="txt-right">
 				<span th:text="${#numbers.formatDecimal(inv.totalAmount,1,'POINT',2,'COMMA')}"></span>
 			</div>
-			<div class="txt-right">
+			<div class="txt-right" th:classappend="${inv.paidAmount > 0 ? 'green-txt':''}">
 				<span th:text="${#numbers.formatDecimal(inv.paidAmount, 1,'POINT',2,'COMMA')}"></span>
 			</div>
-			<div class="txt-right red-txt">
-				<span th:text="${#numbers.formatDecimal(inv.totalAmount - inv.paidAmount, 1, 'POINT',2,'COMMA')}"></span>
+			<div class="date-value">
+				<span th:text="${inv.lastPaymentDate != null ? #temporals.format(inv.lastPaymentDate, 'dd.MM.yyyy') : ''}"></span>
 			</div>
-			<div class="x-1em-padding">
-				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
+			<div th:with="dept=${inv.totalAmount - inv.paidAmount}" class="txt-right" th:classappend="${dept > 0 ? 'red-txt':''}">
+				<span th:text="${#numbers.formatDecimal(dept, 1, 'POINT',2,'COMMA')}"></span>
+			</div>
+			<div>
+				&ensp;
+				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}" 
+					th:attr="data-title=${'Pregled uplata'}" class="hover-title"
 					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
-					<img alt="Uplate" th:src="@{/resources/img/money_coins.svg}" height="24" data-title="Pregled uplata">
+					<img alt="Uplate" th:src="@{/resources/img/money_coins.svg}" height="24">
 				</a>
 				&ensp;
-				<a th:href="@{/billings/payments/invoice/{inv_id}(inv_id = ${inv.id})}"
-					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
-					<img alt="Uplate" th:src="@{/resources/img/invoice.svg}" height="24" data-title="Pregled uplata">
+				<a th:href="@{/invoices/id/{inv_id}(inv_id = ${inv.id})}"
+					th:attr="data-title=${'Idi na fakturu'}" class="hover-title">
+					<img alt="Uplate" th:src="@{/resources/img/invoice.svg}" height="24">
 				</a>			
 			</div>
 		</li>
 		<li class="tr-li">
 			<div></div>
-			<div></div>
+<!-- 			<div></div> -->
+<!-- 			<div></div> -->
 			<div></div>
 			<div></div>
 			<div th:with="totalSum=${#aggregates.sum(invoices.![totalAmount])}" class="sum-td txt-right">
 				<span th:text="${#numbers.formatDecimal(totalSum,1,'POINT',2,'COMMA')}">0,00</span>
 			</div>
+			<div th:with="paidSum=${#aggregates.sum(invoices.![paidAmount])}"
+				class="sum-td txt-right" th:classappend="${paidSum > 0 ? 'green-txt':''}">
+				<span th:text="${#numbers.formatDecimal(paidSum,1,'POINT',2,'COMMA')}">0,00</span>
+			</div>
 			<div></div>
-			<div></div>
+			<div th:with="totalDebt=${#aggregates.sum(invoices.![totalAmount]) - #aggregates.sum(invoices.![paidAmount])}"
+				class="sum-td txt-right" th:classappend="${totalDebt > 0 ? 'red-txt':''}">
+				<span th:text="${#numbers.formatDecimal(totalDebt,1,'POINT',2,'COMMA')}">0,00</span>
+			</div>
+			
 			<div></div>
 		</li>
 	</ul>
@@ -98,7 +118,7 @@
 				<li th:each="pay, stat : ${payments}" class="tr-li" th:id="${'paid_row_' + pay.id}"
 					th:classappend="${stat.odd} ? 'tr-odd' : ''">
 					<div>
-						<span th:text="${stat.count}"></span>
+						<span th:text="${#strings.concat(stat.count, '.')}" class="ordinal"></span>
 					</div>
 					<div class="date-value">
 						<span th:text="${pay.paymentDate != null ? #temporals.format(pay.paymentDate, 'dd.MM.yyyy') : ''}"></span>
@@ -109,13 +129,13 @@
 					<div>
 						<a th:href="@{/billings/invoices/{inv_id}/payments/{pay_id}/edit(inv_id=${pay.invoice.id}, pay_id=${pay.id})}"
 							onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');"
-							data-title="Izmeni uplatu">
+							th:attr="data-title=${'Izmeni uplatu'}" class="hover-title">
 							<img alt="Izmeni" th:src="@{/resources/img/edit.svg}" height="18">	
 						</a>	
 						&ensp;
 						<a th:href="@{/billings/payments/{pay_id}/remove(pay_id=${pay.id})}"
 							onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');"
-							data-title="Ubriši uplatu">
+							th:attr="data-title=${'Obriši uplatu'}" class="hover-title">
 							<img alt="Obriši" th:src="@{/resources/img/delete.svg}" height="18">	
 						</a>			
 					</div>
@@ -157,13 +177,14 @@
 		</div>
 		<!-- 			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');" -->
 		<form th:action="@{/billings/payments/save}" th:object="${payment}" method="post" name="add_or_edit_payment_form"
+			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');"
 			class="y-1em-padding x-2em-padding">
 			<table>
 				<tr th:with="inv=${invoice}">
 					<td><label for="inv_no" >Broj fakture</label>:</td>
 					<td>
-						<span th:if="${#fields.hasErrors('invoice')}" th:errors="*{invoice.id}" class="fieldError-label"></span>
-						<input type="text" id="inv_no" name="invoice.id" th:value="${inv.id}" class="s-input"
+						<span th:if="${#fields.hasErrors('invoice')}" th:errors="*{invoice}" class="fieldError-label"></span>
+						<input type="text" id="inv_no" name="invoice" th:value="${inv.id}" class="s-input"
 							th:appendclass="${#fields.hasErrors('invoice')}? fieldError" readonly="readonly"/>
 					</td>
 				</tr>				
@@ -176,7 +197,7 @@
 					<td>
 						<input type="text" id="pay_amount" name="amount" 
 							th:value="${#numbers.formatDecimal(payment.amount,1,'POINT',2,'COMMA')}"
-							class="s-input" style="font-weight: bolder;" />
+							class="l-input" style="font-weight: bolder;" />
 					</td>
 				</tr>
 				<tr>

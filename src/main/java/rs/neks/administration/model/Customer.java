@@ -45,7 +45,7 @@ public class Customer {
 
 	@Type(type = "org.hibernate.type.NumericBooleanType")
 	@Column(name = "active", columnDefinition = "TINYINT")
-	private boolean active;
+	private Boolean active;
 
 	@Column(name = "created_on")
 	private LocalDateTime createdOn;
@@ -102,13 +102,13 @@ public class Customer {
 
 	public void setAltName(String altName) {
 		this.altName = altName;
+	}	
+
+	public Boolean getActive() {
+		return Optional.ofNullable(this.active).orElse(true);
 	}
 
-	public boolean isActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
+	public void setActive(Boolean active) {
 		this.active = active;
 	}
 
