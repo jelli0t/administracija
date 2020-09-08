@@ -3,10 +3,6 @@
  */
 package rs.neks.administration.controller;
 
-import java.beans.PropertyEditorSupport;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +31,6 @@ import rs.neks.administration.service.CustomerService;
 import rs.neks.administration.service.InvoiceService;
 import rs.neks.administration.util.DateUtils;
 import rs.neks.administration.util.Notification;
-import rs.neks.administration.util.TextUtils;
 
 /**
  * @author jelles
@@ -57,7 +50,14 @@ public class BillingController {
 	public String defaultOverview(Model model) {
 		final LocalDateTime from = DateUtils.makeOrDefault(0, 1, 1);
 		final LocalDateTime to = from.plusYears(1);
-		List<Invoice> invoices = invoiceService.findAllSortedByCustomer(from, to);
+		List<Invoice> invoices = null;
+		Invoice lastInvoice = invoiceService.findLast();		
+		if(lastInvoice != null) {
+			invoices = invoiceService.findAll(from, to, lastInvoice.getCustomer(), true);
+			model.addAttribute("customer", lastInvoice.getCustomer());
+		} else {			
+			invoices = invoiceService.findAllSortedByCustomer(from, to);
+		}		
 		List<Customer> customers = customerService.findAll(true);
 		model.addAttribute("invoices", invoices);
 		model.addAttribute("customers", customers);
@@ -65,6 +65,7 @@ public class BillingController {
 		model.addAttribute("year", from.getYear());
 		return "billings";
 	}
+	
 	
 	@RequestMapping(path = {"/overview", "/overview/{year}/customer/{customerId}"}, method = RequestMethod.GET)
 	public String prepareBillingsOverview(
@@ -75,9 +76,11 @@ public class BillingController {
 		final LocalDateTime to = from.plusYears(1);
 		final Customer customer = customerId.map(id -> customerService.findById(id)).orElse(null);
 		List<Invoice> invoices = invoiceService.findAll(from, to, customer, true);
+		model.addAttribute("customer", customer);
 		model.addAttribute("invoices", invoices);
 		return "fragment/billing :: overview";
 	}
+	
 	
 	@RequestMapping(path = "/payments/invoice/{invoiceId}", method = RequestMethod.GET)
 	public String invoicePayments(@PathVariable Integer invoiceId, Model model) {
@@ -164,18 +167,25 @@ public class BillingController {
 			return "redirect:/billings";
 		}
 		model.addAttribute("payment", payment);
-		return "fragment/billing :: remove_confirm";
+		return "fragment/billing :: remove";
 	}
 	
-	
-	@RequestMapping(path = "/payments/{paymentId}/remove", method = RequestMethod.DELETE)
-	public String removePayment(@PathVariable Integer paymentId, RedirectAttributes redirectAttributes) {
-		boolean removed = invoiceService.removePaymentById(paymentId);
-		Notification notification = new Notification(removed, "Uspesno ste obrisali uplatu", null);
-		redirectAttributes.addFlashAttribute("notification", notification);
-		redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
-		return "redirect:/billings/overview";
+		
+	@RequestMapping(path = "/payments/remove", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ModelAndView removePayment(@RequestBody Payment payment, RedirectAttributes redirectAttributes, ModelMap modelMap) {
+		StringBuilder uriBuilder = new StringBuilder("redirect:/billings/overview");
+		if(payment != null && payment.getId() != null) {
+			payment = invoiceService.findPaymentById(payment.getId());
+			final Invoice invoice = payment.getInvoice();
+			boolean result = invoiceService.removePaymentById(payment.getId());			
+			Notification notification = new Notification(result, "Uspesno obrisana uplata", null);
+			redirectAttributes.addFlashAttribute("invoice", invoice);
+			redirectAttributes.addFlashAttribute("notification", notification);
+			redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
+			Optional.ofNullable(invoice).ifPresent(in -> uriBuilder.append("/").append(in.getLastPaymentDate().getYear()));
+			Optional.ofNullable(invoice).ifPresent(in -> uriBuilder.append("/customer/").append(in.getCustomer().getId()));
+		}
+		return new ModelAndView(uriBuilder.toString());
 	}
-	
 	
 }

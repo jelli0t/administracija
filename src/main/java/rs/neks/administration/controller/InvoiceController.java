@@ -116,6 +116,33 @@ public class InvoiceController {
 		return new ModelAndView("fragment/invoice :: edit", model, (HttpStatus) model.getAttribute("httpStatus"));
 	}
 	
+	
+	@RequestMapping(path = "/{id}/remove", method = RequestMethod.GET)
+	public String prepareRemoving(@PathVariable Integer id, Model model) {
+		if(id != null) {
+			Invoice invoice = invoiceService.findById(id);
+			model.addAttribute("invoice", invoice);
+		}
+		return "fragment/invoice :: remove";
+	}
+	
+	
+	@RequestMapping(path = "/remove", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE )
+	public ModelAndView removeInvoice(@RequestBody Invoice invoice, RedirectAttributes redirectAttributes, ModelMap modelMap) {
+		StringBuilder uriBuilder = new StringBuilder("redirect:/invoices/overview");
+		if(invoice != null && invoice.getId() != null) {
+			invoice = invoiceService.findById(invoice.getId());
+			boolean result = invoiceService.remove(invoice);
+			final LocalDateTime created = invoice.getCreatedOn();
+			Notification notification = new Notification(result, "Uspesno ste sacuvali podatke o kupcu", null);
+			redirectAttributes.addFlashAttribute("notification", notification);
+			redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
+			Optional.ofNullable(created).ifPresent(c -> uriBuilder.append("/").append(c.getYear()));
+			Optional.ofNullable(created).ifPresent(c -> uriBuilder.append("/").append(c.getMonthValue()));
+		}
+		return new ModelAndView(uriBuilder.toString());
+	}
+	
 
 	@RequestMapping(path = "/save", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ModelAndView saveInvoice(@Valid @RequestBody Invoice invoice, BindingResult bindingResult, 
@@ -129,6 +156,7 @@ public class InvoiceController {
 		boolean result = invoiceService.save(invoice);
 		final LocalDateTime created = invoice.getCreatedOn();	
 		Notification notification = new Notification(result, "Uspesno ste sacuvali podatke o kupcu", null);
+		redirectAttributes.addFlashAttribute("invoice", invoice);
 		redirectAttributes.addFlashAttribute("notification", notification);
 		redirectAttributes.addFlashAttribute("httpStatus", HttpStatus.OK);
 		StringBuilder uriBuilder = new StringBuilder("redirect:/invoices/overview");

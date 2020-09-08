@@ -30,6 +30,22 @@ public class CommonRepositoryImp<T extends Idable> implements CommonRepository<T
 		return t;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public T findLast() {
+		T t = null;
+		try {
+			t = (T) sessionFactory.getCurrentSession()
+					.createQuery("from "+ entityClass.getName() +" order by id desc")
+					.setMaxResults(1)
+					.getSingleResult();	
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return t;
+	}
+	
+	
 	@Override
 	public boolean save(T t) {
 		try {

@@ -14,8 +14,15 @@
 		</div>
 	</th:block>
 	
+	<div id="title-header" class="x-grow1">
+		<span th:text="${#messages.msg('invoices.overview')}"></span>
+		<span>za mesec</span>
+		<th:block th:if="${month != null}">
+			<span th:with="month_name=${T(java.time.Month).of(month).name()}" th:text="${#messages.msg(month_name.toLowerCase())}"></span>
+		</th:block>
+	</div>
 
-	<ul class="table-ul">
+	<ul class="table-ul fx-selfalign-centar">
 		<li class="tr-li trh-li">
 			<div>
 				<a th:href="@{/invoices/add}" class="bttn-3d bttn-3d-xs bttn-3d-ok"
@@ -24,9 +31,9 @@
 				</a>
 			</div>
 			<div th:text="${#messages.msg('customer.name')}">Naziv kupca</div>
-			<div th:text="${#messages.msg('invoice.no')}">Broj fakture</div>
-			<div th:text="${#messages.msg('date.invoicing')}">Datum fakturisanja</div>
-			<div th:text="${#messages.msg('date.due.for.payment')}">Datum dospeća</div>
+			<div class="s-input" th:text="${#messages.msg('invoice.no')}">Broj fakture</div>
+			<div class="l-input" th:text="${#messages.msg('date.invoicing')}">Datum fakturisanja</div>
+			<div class="l-input" th:text="${#messages.msg('date.due.for.payment')}">Datum dospeća</div>
 			<div>Otpremljena<br>Količina</div>
 			<div>Fakturisna vrednost<br>(sa PDV)</div>
 			<div></div>
@@ -100,6 +107,14 @@
 		$.each($('.mount-nav'), function(i, value) {
 			$(this).toggleClass('highlighted', ++i === month);		
 		});
+		
+		var inv_id = /*[[${invoice?.id}]]*/;
+		if(inv_id) {
+			$('#inv_row_' + inv_id).addClass("updated-highlight").delay(5000).queue(function(next) {
+			    $(this).removeClass("updated-highlight");
+			    next();
+			});	
+		}
 	/*]]>*/
 	</script>
 </section>
@@ -169,5 +184,40 @@
 			</form>
 		</div>
 	</div>
+	
+	
+<section th:fragment="remove" class="overlay">
+	<div class="popup-box">
+		<div class="popup-box-header">
+			<span th:text="${#messages.msg('invoice.deletion')}">Brisanje fakture</span>
+			<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">x</button>
+		</div>
+		<div class="x-2em-padding y-1em-padding">
+			<ul th:with="inv=${invoice}" class="y-1em-padding">
+				<li style="font-weight: bold;">Da li ste sigurni da želite da obrišete fakturu?</li>
+				<li style="font-style: italic;">Brisanjem fakture uklanjate sve uplate za ovu fakturu.</li>
+				<li>
+					<span th:text="${#messages.msg('invoice.no')}"></span>:<span th:text="${inv.invoiceNo}"></span>
+				</li>
+				<li>
+					<span th:text="${#messages.msg('date.invoicing')}"></span>:
+					<span th:text="${inv.createdOn != null ? #temporals.format(inv.createdOn, 'dd.MM.yyyy') : ''}"></span>
+				</li>
+			</ul>
+			<form th:action="@{/invoices/remove}" method="post" th:object="${invoice}"
+				onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');"
+				class="txt-right y-1em-padding">
+				<input type="hidden" th:field="*{id}">
+				<button class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
+					<span th:text="${#messages.msg('cancel')}">Odustani</span>
+				</button>
+				&emsp;
+				<button type="submit" class="bttn-3d bttn-3d-ok">
+					<span th:text="${#messages.msg('delete')}"> Obriši</span>
+				</button>
+			</form>	
+		</div>
+	</div>
+</section>
 
 </html>

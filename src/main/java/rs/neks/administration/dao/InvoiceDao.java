@@ -13,7 +13,7 @@ import rs.neks.administration.model.Invoice;
  * @author nemanja
  *
  */
-public interface InvoiceDao {
+public interface InvoiceDao extends CommonRepository<Invoice> {
 
 	/**
 	 * Pronalazi Customera za zadati ID.

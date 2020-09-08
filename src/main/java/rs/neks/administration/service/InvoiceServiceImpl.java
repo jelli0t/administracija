@@ -38,6 +38,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 	}
 	
 	@Override
+	public Invoice findLast() {
+		return invoiceDao.findLast();
+	}
+	
+	@Override
 	public Invoice findFullyById(int id) {
 		return invoiceDao.findFullyById(id);
 	}
@@ -81,6 +86,15 @@ public class InvoiceServiceImpl implements InvoiceService {
 		}
 		return invoiceDao.checkIfInvoiceNoIsUnique(invoiceNo);
 	}
+	
+	@Override
+	public boolean remove(Invoice invoice) {
+		if(invoice == null) {
+			return false;
+		}
+		return invoiceDao.remove(invoice);
+	}
+	
 	
 	@Override
 	public Payment findPaymentById(Integer paymentId) {

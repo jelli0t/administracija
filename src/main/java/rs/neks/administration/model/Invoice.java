@@ -34,7 +34,7 @@ import rs.neks.administration.util.TextUtils;
  */
 @Entity
 @Table(name = "invoice")
-public class Invoice {
+public class Invoice implements Idable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

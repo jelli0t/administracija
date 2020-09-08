@@ -13,10 +13,9 @@
 	<main class="fx-box fx-dir-row fx-grow1">
 		<aside id="aside-left" class="y-2em-padding">
 			<ul>
-				<li th:each="cus, stat : ${customers}" class="tr-li">
+				<li th:each="cus, stat : ${customers}" class="tr-li cust-nav" th:id="${'customer_' + cus.id}">
 					<a th:href="@{/billings/overview/{yyyy}/customer/{cus_id}(yyyy=2020, cus_id=${cus.id})}"
-						onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');"						
-						th:classappend="${cus?.id == customer?.id} ? 'active' : ''">
+						onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
 						<span th:text="${cus.name}"></span>
 					</a>					
 				</li>
@@ -24,7 +23,7 @@
 		
 		</aside>
 		
-		<section id="main_conetent" class="fx-box fx-grow1 fx-justify-cnt">
+		<section id="main_conetent" class="fx-box fx-grow1 fx-dir-col fx-justify-start">
 
 			<th:block th:include="fragment/billing :: overview">				
 			</th:block>			

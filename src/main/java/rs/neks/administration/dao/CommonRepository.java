@@ -16,7 +16,14 @@ public interface CommonRepository<T extends Idable> {
 	 * 
 	 * @param id
 	 * */
-	public T findById(int id);	
+	public T findById(int id);
+	
+	/**
+	 * Pronalazi poslednje uneseni entitet. Radi sort po ID.
+	 * 
+	 * @return t
+	 * */
+	public T findLast();
 	
 	/**
 	 * Radi save/update

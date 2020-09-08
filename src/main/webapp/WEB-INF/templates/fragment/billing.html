@@ -16,14 +16,21 @@
 			</script>
 		</div>
 	</th:block>
+	
+	<div id="title-header" class="x-grow1">
+		<span th:text="${#messages.msg('billings.overview')}"></span>
+		<th:block th:if="${customer != null}">
+			<span th:text="${customer?.name}"></span>
+		</th:block>
+	</div>
 
-	<ul class="table-ul">
+	<ul class="table-ul fx-selfalign-centar">
 		<li class="tr-li trh-li">
 			<div></div>
 <!-- 			<div>Šifra<br>kupca</div> -->
 <!-- 			<div>Naziv kupca</div> -->
-			<div>Datum fakturisanja</div>
-			<div>Datum dospeća</div>
+			<div class="l-input">Datum fakturisanja</div>
+			<div class="l-input">Datum dospeća</div>
 			<div>Fakturisna vrednost<br>(sa PDV)</div>
 			<div>Plaćeni iznos</div>
 			<div>Plaćeno dana</div>
@@ -31,7 +38,7 @@
 			<div></div>
 		</li>
 		<li th:each="inv, stat : ${invoices}" class="tr-li" th:id="${'inv_row_' + inv.id}"
-			th:classappend="|${stat.odd ? 'tr-odd' : ''} ${invoice?.id == inv.id ? 'updated-highlight' : ''}|">
+			th:classappend="|${stat.odd ? 'tr-odd' : ''}|">
 			<div th:text="${#strings.concat(stat.count, '.')}" class="ordinal"
 				th:classappend="${stat.first ? 'show-customer' : ''}" 
 				th:attr="data-customer=${#strings.concat('#', inv.customer.code, ': ', inv.customer.name)}">
@@ -96,6 +103,25 @@
 			<div></div>
 		</li>
 	</ul>
+	
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+		var cust_id = /*[[${customer?.id}]]*/ 0;
+		console.log('selected customer: ' + cust_id);
+		$.each($('.cust-nav'), function(i, value) {
+			var id = '#customer_' + cust_id;
+			$(this).toggleClass('highlighted', $(this).is(id));		
+		});
+		
+		var inv_id = /*[[${invoice?.id}]]*/;
+		if(inv_id) {
+			$('#inv_row_' + inv_id).addClass("updated-highlight").delay(5000).queue(function(next) {
+			    $(this).removeClass("updated-highlight");
+			    next();
+			});	
+		}
+	/*]]>*/
+	</script>
 </section>
 
 <!-- ----------------------------------
@@ -217,29 +243,46 @@
 </div>
 
 
-<section th:fragment="remove_confirm" class="overlay">
+<!-- ---------------------------------------- 
+============== DELETE PAYMENT ================
+ ----------------------------------------- -->
+<section th:fragment="remove" class="overlay">
 	<div class="popup-box">
 		<div class="popup-box-header">
-			<span>Brisanje uplate</span>
+			<span th:text="${#messages.msg('payment.deletion')}">Brisanje uplate</span>
 			<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">x</button>
 		</div>
-		<div>
-			<p th:with="p=${payment}" class="x-1em-padding">
-				Da li ste sigurni da želite da obrišete uplatu <br>
-				za fakturu br. <span th:text="${p.invoice.invoiceNo}"></span>,<br>
-				od dana: <span th:text="${p.paymentDate != null ? #temporals.format(p.paymentDate, 'dd.MM.yyyy') : ''}"></span><br>
-				na iznos <span th:text="${#numbers.formatDecimal(p.amount,1,'POINT',2,'COMMA')}"></span>
-			</p>
-			<button class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
-				<span>Odustani</span>
-			</button>
-			&emsp;
-			<a th:href="@{/billings/payments/{pay_id}/remove (pay_id=${payment.id})}" class="bttn-3d bttn-3d-ok"
-				onclick="event.preventDefault(); deleteItem(this.href, 'main_conetent');">
-				<span>Obriši</span>
-			</a>		
+		<div class="x-2em-padding y-1em-padding">
+			<ul th:with="p=${payment}" class="y-1em-padding">
+				<li style="font-weight: bold;">Da li ste sigurni da želite da obrišete uplatu?</li>
+				<li>
+					<label th:text="${#messages.msg('invoice.no')}"></label>
+					<span th:text="${p.invoice.invoiceNo}"></span>
+				</li>
+				<li>
+					<label th:text="${#messages.msg('payment.date')}"></label>
+					<span th:text="${p.paymentDate != null ? #temporals.format(p.paymentDate, 'dd.MM.yyyy') : ''}"></span>
+				</li>
+				<li>
+					<label th:text="${#messages.msg('payment.amount')}"></label>:
+					<span th:text="${#numbers.formatDecimal(p.amount,1,'POINT',2,'COMMA')}"></span>
+				</li>
+			</ul>
+			<form th:action="@{/billings/payments/remove}" method="post" th:object="${payment}"
+				onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');"
+				class="txt-right y-1em-padding">
+				<input type="hidden" th:field="*{id}">
+				<button class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
+					<span th:text="${#messages.msg('cancel')}">Odustani</span>
+				</button>
+				&emsp;
+				<button type="submit" class="bttn-3d bttn-3d-ok">
+					<span th:text="${#messages.msg('delete')}"> Obriši</span>
+				</button>
+			</form>	
 		</div>
 	</div>
 </section>
+
 
 </html>

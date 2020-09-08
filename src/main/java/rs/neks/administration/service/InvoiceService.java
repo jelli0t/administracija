@@ -24,6 +24,12 @@ public interface InvoiceService {
 	public Invoice findById(int id);
 	
 	/**
+	 * Pronalazi poslednje unetu fakturu.
+	 * 
+	 * */
+	public Invoice findLast();
+	
+	/**
 	 * Pronalazi potpun Invoice objekat, sto ukljucuje i uplate vezane za fakturu.
 	 * 
 	 * @param id
@@ -55,6 +61,11 @@ public interface InvoiceService {
 	public boolean save(Invoice invoice);
 	
 	/**
+	 * 
+	 * */
+	public boolean remove(Invoice invoice);
+	
+	/**
 	 * Proverava da li je prosledjeni broj fakture unikatan.
 	 * 
 	 * @param invoiceNo
@@ -77,6 +88,6 @@ public interface InvoiceService {
 	/**
 	 * @param paymentId
 	 * */
-	public boolean removePaymentById(Integer paymentId);
-	
+	public boolean removePaymentById(Integer paymentId);	
+
 }

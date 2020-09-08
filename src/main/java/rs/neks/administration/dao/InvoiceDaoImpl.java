@@ -17,7 +17,7 @@ import rs.neks.administration.model.Invoice;
 
 @Repository(value = "invoiceDao")
 @Transactional
-public class InvoiceDaoImpl implements InvoiceDao {
+public class InvoiceDaoImpl extends CommonRepositoryImp<Invoice> implements InvoiceDao {
 	
 	@Autowired
 	private SessionFactory sessionFactory;
