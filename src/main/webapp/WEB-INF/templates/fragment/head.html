@@ -30,24 +30,7 @@
 			    console.log( "Error: " + errorThrown );
 			});
 			return false;
-		}
-		
-		function deleteItem(url, target) {
-			$.ajax({
-				url: url,	 		
-		        type: 'DELETE',
-			    dataType: 'html'
-			})
-			.done(function( response ) {
-				$('#'+target).html(response);
-				$('.overlay').parent().empty();
-			})
-			.fail(function( xhr, status, errorThrown ) {
-			    console.log( "Error: " + errorThrown );
-			});
-			return false;
-		}
-		
+		}	
 		
 		function postAndFragmentResult($form, target) {
 			var json = $( $form ).serializeObject();
@@ -104,6 +87,35 @@
 	    	document.getElementById('error_placeholder').innerHTML = '';
 	    	return false;
 	    }
+	    
+	    
+	    function switch_year(year) {
+	    	if(year) {
+	    		$('#popup_placeholder').html('<div class="overlay"><div class="loader">Loading...</div></div>');
+	    		var href = window.location.href;
+				var data = {};
+				data['year'] = year;
+	    		$.ajax({
+					url: href + '/year',
+					type : 'POST',
+					data: data,
+					beforeSend: function(xhr) {
+//	 		           		xhr.setRequestHeader(csrf[0], csrf[1]);
+			        	}
+				})
+				.done(function( response ) {
+					console.log('Uspesno promenjena godina.');
+					window.location = href;
+				})
+				.fail(function( xhr, status, errorThrown ) {
+					$('#error_placeholder').html(xhr.responseText);
+				    console.log( "Error: " + errorThrown );
+				}).always(function() {
+					$('#popup_placeholder').empty();
+				});
+	    	}
+	    }
+	    
 	    
 	</script>
 </head>

@@ -52,6 +52,16 @@ public class CustomerController {
 		return "fragment/customer :: overview";
 	}
 	
+	
+	@RequestMapping(path = "/search/{first_letter}", method = RequestMethod.GET)
+	public String searchByFirstLetter(@PathVariable("first_letter") String firstLetter, Model model) {
+		List<Customer> customers = customerService.findAll(firstLetter, false);
+		model.addAttribute("customers", customers);
+		model.addAttribute("searchParam", firstLetter);
+		return "customers";
+	}
+	
+	
 	@RequestMapping(path = {"/add", "/{id}/edit"}, method = RequestMethod.GET)
 	public ModelAndView prepareCustomerEdit(@PathVariable Optional<Integer> id, ModelMap model) {
 		Customer customer = id.map(x -> customerService.findById(x))

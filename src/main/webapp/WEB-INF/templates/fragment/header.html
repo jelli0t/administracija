@@ -5,31 +5,35 @@
 	</head>
 	
 	<header th:fragment="header" class="fx-box fx-dir-row fx-valign-cnt fx-justify-sbtw x-2em-padding" id="header">
-	
-		<span>
-			<img alt="Neks" th:src="@{/resources/img/neks_logo_32.png}">
-		</span>
+		<div class="fx-grow2">
+			<a th:href="@{/billings}" class="logo">
+				<img alt="Neks" th:src="@{/resources/img/neks_logo_32.png}">
+			</a>		
+			<nav class="x-1em-padding" style="display: inline-block;">
+				<a th:href="@{/customers}">
+					<span th:text="${#messages.msg('customers')}">Kupci</span>
+				</a>
+				<a th:href="@{/invoices}">
+					<span th:text="${#messages.msg('invoices.overview')}">Pregled fakturisanja</span>
+				</a>
+				<a th:href="@{/billings}">
+					<span th:text="${#messages.msg('billings.overview')}">Pregled potraživanja</span>
+				</a>
+			</nav>
+		</div>
+		<!-- Years selection -->
+		<div class="fx-grow1">
+			<label th:text="${#messages.msg('year')}"></label>
+			<select name="year" id="years_selection" style="font-weight: bolder;" 
+				onchange="javascript:switch_year(this.value);">
+			    <option th:each="y : ${#numbers.sequence(2010, 2099)}"
+			    	th:value="${y}" th:text="${y}"
+			    	th:selected="${y == year}">
+			    </option>
+			</select>
+		</div>
 		
-		<nav class="x-1em-padding">
-			<a th:href="@{/customers}" class="x-1em-padding">
-				<span th:text="${#messages.msg('customers')}">Kupci</span>
-			</a>
-			<a th:href="@{/invoices}" class="x-1em-padding">
-				<span th:text="${#messages.msg('invoices.overview')}">Pregled fakturisanja</span>
-			</a>
-			<a th:href="@{/billings}" class="x-1em-padding">
-				<span th:text="${#messages.msg('billings.overview')}">Pregled potraživanja</span>
-			</a>
-		</nav>
-		
-		<select name="year" id="years_selection" >
-		    <option th:each="y : ${#numbers.sequence(2010, 2099)}"
-		    	th:value="${y}" th:text="${y}"
-		    	th:selected="${y == year}">
-		    </option>
-		</select>
-		
-		<div>
+		<div class="fx-grow2 txt-right">
 			LANG
 			
 		</div>

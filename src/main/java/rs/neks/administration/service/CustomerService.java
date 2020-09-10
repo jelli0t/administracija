@@ -27,6 +27,14 @@ public interface CustomerService {
 	 * @param aciveOnly
 	 * */
 	public List<Customer> findAll(boolean aciveOnly);
+	
+	/**
+	 * Pronalazi listu Customer-a.<br>
+	 * [opciono] mozemo da zadamo flag da trazi samo aktivne.
+	 * 
+	 * @param aciveOnly
+	 * */
+	public List<Customer> findAll(String nameLike, boolean aciveOnly);
 		
 	/**
 	 * 

@@ -22,7 +22,6 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +43,7 @@ import rs.neks.administration.util.TextUtils;
  */
 @Controller
 @RequestMapping("/invoices")
-public class InvoiceController {
+public class InvoiceController extends YearAware {
 	
 	@Autowired
 	private InvoiceService invoiceService;
@@ -55,7 +54,8 @@ public class InvoiceController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String defaultOverview(Model model) {
-		final LocalDateTime from = DateUtils.makeOrDefault(0, 0, 1);
+		int year = Optional.ofNullable( model.getAttribute("year") ).map(y -> (int) y).orElse(0);
+		final LocalDateTime from = DateUtils.makeOrDefault(year, 0, 1);
 		final LocalDateTime to = from.plusMonths(1);
 		List<Invoice> invoices = invoiceService.findAll(from, to, null, false);
 		model.addAttribute("invoices", invoices);
@@ -76,20 +76,6 @@ public class InvoiceController {
 		return "invoices";
 	}
 	
-	
-	@RequestMapping(path = "/year/{year}", method = RequestMethod.PUT)
-	public String switchYear(@PathVariable Optional<Integer> year, Model model) {
-		if(!year.isPresent()) {
-			return "redirect:/invoices";
-		}
-		final LocalDateTime from = DateUtils.makeOrDefault(year.get(), 1, 1);
-		final LocalDateTime to = from.plusYears(1);
-		List<Invoice> invoices = invoiceService.findAll(from, to, null, false);
-		model.addAttribute("invoices", invoices);
-		model.addAttribute("year", from.getYear());
-		return "invoices";
-	}
-
 	
 	@RequestMapping(path = {"/overview", "/overview/{year}/{month}"}, method = RequestMethod.GET)
 	public String prepareInvoiceOverview(

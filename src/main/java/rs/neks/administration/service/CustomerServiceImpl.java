@@ -31,4 +31,10 @@ public class CustomerServiceImpl implements CustomerService {
 			return false;
 		return customerDao.save(customer);
 	}
+
+
+	@Override
+	public List<Customer> findAll(String nameLike, boolean aciveOnly) {
+		return customerDao.findAll(nameLike, aciveOnly);
+	}
 }

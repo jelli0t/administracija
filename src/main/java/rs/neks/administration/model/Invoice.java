@@ -68,6 +68,9 @@ public class Invoice implements Idable {
 	
 	private String description;
 	
+	@Column(name = "order_id")
+	private Integer orderId;
+	
 	@OneToMany(fetch = FetchType.EAGER, mappedBy="invoice")
 	private List<Payment> payments;
 	
@@ -166,6 +169,14 @@ public class Invoice implements Idable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}	
+
+	public Integer getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Integer orderId) {
+		this.orderId = orderId;
 	}
 
 	public List<Payment> getPayments() {

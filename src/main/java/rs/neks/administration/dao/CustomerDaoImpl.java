@@ -3,14 +3,9 @@
  */
 package rs.neks.administration.dao;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import rs.neks.administration.model.Customer;
@@ -20,31 +15,7 @@ import rs.neks.administration.model.Customer;
  *
  */
 @Repository(value = "customerDao")
-@Transactional
-public class CustomerDaoImpl implements CustomerDao {
-	
-	@Autowired
-	private SessionFactory sessionFactory;
-	
-	public CustomerDaoImpl(SessionFactory sessionFactory) {
-		super();
-		this.sessionFactory = sessionFactory;
-	}
-
-	@Override
-	public Customer findById(int id) {
-		Customer customer = null;
-		String HQL = "from rs.neks.administration.model.Customer where id = :id";
-		try {		
-			customer = (Customer) sessionFactory.getCurrentSession()
-					.createQuery(HQL).setParameter("id", id)
-					.getSingleResult();
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}		
-		return customer;
-	}
+public class CustomerDaoImpl extends CommonRepositoryImp<Customer> implements CustomerDao {
 
 	@Override
 	public Customer findByCode(String code) {
@@ -67,27 +38,22 @@ public class CustomerDaoImpl implements CustomerDao {
 		}
 		return customers;
 	}
-
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public boolean save(Customer customer) {
-		if(customer == null) {
-			return false;
-		}
+	public List<Customer> findAll(String nameLike, boolean aciveOnly) {
+		List<Customer> customers = null;
+		String HQL = new StringBuilder("from rs.neks.administration.model.Customer where name like :starts_with")
+				.append(aciveOnly ? " and active = 1" : "")
+				.append(" order by name").toString();
 		try {
-			if(customer.getId() != null) {
-				customer.setModifiedOn(LocalDateTime.now());
-				sessionFactory.getCurrentSession().merge(customer);
-			} else {
-				customer.setCreatedOn(LocalDateTime.now());
-				sessionFactory.getCurrentSession().persist(customer);	
-			}
+			customers = sessionFactory.getCurrentSession().createQuery(HQL)
+					.setParameter("starts_with", nameLike + "%")
+					.getResultList();
 		} catch (Exception e) {
-			System.err.println("Greska: "+e.getMessage());
-			e.printStackTrace();
-			return false;
-		}		
-		return true;
+			customers = new ArrayList<Customer>(0);
+		}
+		return customers;
 	}
 
 }

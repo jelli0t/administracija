@@ -25,4 +25,12 @@ public abstract class TextUtils {
 	public static boolean notEmpty(@Nullable Object str) {
 		return (str != null && !EMPTY.equals(str));
 	}
+	
+	/**
+	 * 
+	 * */
+	public static char toChar(int code) {
+		return (char) code;
+	}
+	
 }

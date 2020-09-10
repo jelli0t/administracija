@@ -38,7 +38,7 @@ import rs.neks.administration.util.Notification;
  */
 @Controller
 @RequestMapping("/billings")
-public class BillingController {
+public class BillingController extends YearAware {
 
 	@Autowired
 	private InvoiceService invoiceService;
@@ -48,7 +48,8 @@ public class BillingController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String defaultOverview(Model model) {
-		final LocalDateTime from = DateUtils.makeOrDefault(0, 1, 1);
+		int year = Optional.ofNullable( model.getAttribute("year") ).map(y -> (int) y).orElse(0);
+		final LocalDateTime from = DateUtils.makeOrDefault(year, 1, 1);
 		final LocalDateTime to = from.plusYears(1);
 		List<Invoice> invoices = null;
 		Invoice lastInvoice = invoiceService.findLast();		

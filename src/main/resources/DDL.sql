@@ -15,6 +15,7 @@ create table if not exists customer
 	zip_code int(6) null,
 	address varchar(255) charset utf8 null,
 	description varchar(255) null,
+	active tinyint(1) null,
 	constraint CUST_UNQ_CODE
 		unique (customer_code)
 );
@@ -31,6 +32,7 @@ create table if not exists invoice
 	due_for_payment timestamp null,
 	total_amount decimal(12,2) null,
 	description varchar(255) null,
+	order_id int(9) not null,
 	constraint INVNO_UNQ_CODE
 		unique (invoice_no)
 );
@@ -42,3 +44,16 @@ create table if not exists payment
 	amount decimal(12,2) null,
 	invoice_id int(9) null
 );
+
+create table if not exists operator
+(
+	id int(9) auto_increment primary key,
+	username varchar(255) null,
+	password varchar(255) null,
+	first_name varchar(255) charset utf8 not null,
+	last_name varchar(255) charset utf8 null,
+	created_on timestamp null,
+	active tinyint(1) null,
+	role varchar(255) charset utf8 null
+);
+

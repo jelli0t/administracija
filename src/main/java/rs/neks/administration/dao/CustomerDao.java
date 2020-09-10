@@ -4,14 +4,7 @@ import java.util.List;
 
 import rs.neks.administration.model.Customer;
 
-public interface CustomerDao {
-
-	/**
-	 * Pronalazi Customera za zadati ID.
-	 * 
-	 * @param id
-	 * */
-	public Customer findById(int id);
+public interface CustomerDao extends CommonRepository<Customer> {
 
 	/**
 	 * Pronalazi Customera za zadatu sifru kupca.
@@ -29,7 +22,12 @@ public interface CustomerDao {
 	public List<Customer> findAll(boolean aciveOnly);
 	
 	/**
+	 * Pronalazi listu Customer-a.<br>
+	 * [opciono] mozemo da zadamo flag da trazi samo aktivne.
 	 * 
+	 * @param nameLike
+	 * @param aciveOnly
 	 * */
-	public boolean save(Customer customer);
+	public List<Customer> findAll(String nameLike, boolean aciveOnly);
+	
 }

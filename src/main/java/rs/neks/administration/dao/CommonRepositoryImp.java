@@ -16,7 +16,7 @@ public class CommonRepositoryImp<T extends Idable> implements CommonRepository<T
 	private Class<T> entityClass;
 
 	@Autowired
-	private SessionFactory sessionFactory;
+	protected SessionFactory sessionFactory;
 
 	@SuppressWarnings("unchecked")
 	public CommonRepositoryImp() {
