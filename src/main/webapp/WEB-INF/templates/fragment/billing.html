@@ -184,7 +184,7 @@
 			&emsp;
 			<a th:href="@{/billings/invoices/{inv_id}/payments/add(inv_id=${invoice.id})}"
 				onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');" class="bttn-3d bttn-3d-ok">
-				<span><font style="font-size: 1.5em;">+</font> Unesi uplatu</span>	
+				<span><font style="font-size: 1.25em;">+</font> Unesi uplatu</span>	
 			</a>
 		</div>
 	</div>
@@ -197,7 +197,6 @@
 			<span th:text="${invoice?.id != null ? 'Izmena uplate na fakturi' : 'Nova uplata na fakturi'}"></span>			
 			<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">X</button>
 		</div>
-		<!-- 			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');" -->
 		<form th:action="@{/billings/payments/save}" th:object="${payment}" method="post" name="add_or_edit_payment_form"
 			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');"
 			class="y-1em-padding x-2em-padding">
@@ -211,14 +210,14 @@
 					</td>
 				</tr>				
 				<tr>
-					<td><label for="pay_pdate" >Datum uplate</label>:</td>
+					<td><label for="pay_pdate" >Datum uplate</label></td>
 					<td><input type="date" id="pay_pdate" th:field="*{pickerPaymentDate}" min="2010-01-01" /></td>
 				</tr>			
 				<tr>
-					<td><label for="pay_amount" >Iznos</label>:</td>
+					<td><label for="pay_amount" >Iznos</label></td>
 					<td>
 						<input type="text" id="pay_amount" name="amount" 
-							th:value="${#numbers.formatDecimal(payment.amount,1,'POINT',2,'COMMA')}"
+							th:value="${#numbers.formatDecimal(payment.amount,0,2,'COMMA')}"
 							class="l-input" style="font-weight: bolder;" />
 					</td>
 				</tr>
@@ -230,7 +229,7 @@
 						<input type="hidden" th:field="*{id}">							
 						<input type="button" value="Odustani" class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
 						&emsp;
-						<input type="submit" value="Saćuvaj" class="bttn-3d bttn-3d-ok">
+						<input type="submit" value="Sačuvaj" class="bttn-3d bttn-3d-ok">
 					</td>
 				</tr>
 			</table>		

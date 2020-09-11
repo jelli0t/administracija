@@ -12,8 +12,8 @@
 
 	<main class="fx-box fx-dir-row fx-grow1">
 		<aside id="aside-left">
-			<ul class="table-ul y-2em-padding">
-				<li th:each="m, stat : ${T(java.time.Month).values()}" class="tr-li mount-nav">
+			<ul class="y-2em-padding">
+				<li th:each="m, stat : ${T(java.time.Month).values()}" class="vnav mount-nav">
 					<a th:href="@{/invoices/overview/{yyyy}/{mm}(yyyy=${year}, mm=${m.getValue()})}"
 						onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
 						<span th:text="${#messages.msg(m.name().toLowerCase())}"></span>

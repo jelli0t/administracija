@@ -59,7 +59,7 @@ public class BillingController extends YearAware {
 		} else {			
 			invoices = invoiceService.findAllSortedByCustomer(from, to);
 		}		
-		List<Customer> customers = customerService.findAll(true);
+		List<Customer> customers = customerService.findAllInvoicesOwners(from, to);
 		model.addAttribute("invoices", invoices);
 		model.addAttribute("customers", customers);
 		model.addAttribute("month", from.getMonthValue());

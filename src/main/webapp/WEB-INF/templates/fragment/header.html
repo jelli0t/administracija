@@ -9,14 +9,14 @@
 			<a th:href="@{/billings}" class="logo">
 				<img alt="Neks" th:src="@{/resources/img/neks_logo_32.png}">
 			</a>		
-			<nav class="x-1em-padding" style="display: inline-block;">
-				<a th:href="@{/customers}">
+			<nav class="x-1em-padding" style="display: inline-block;" th:with="uri=${#httpServletRequest.requestURI}">
+				<a th:href="@{/customers}" th:classappend="${#strings.contains(uri,'customers') ? 'active-tab' : ''}">
 					<span th:text="${#messages.msg('customers')}">Kupci</span>
 				</a>
-				<a th:href="@{/invoices}">
+				<a th:href="@{/invoices}" th:classappend="${#strings.contains(uri,'invoices') ? 'active-tab' : ''}">
 					<span th:text="${#messages.msg('invoices.overview')}">Pregled fakturisanja</span>
 				</a>
-				<a th:href="@{/billings}">
+				<a th:href="@{/billings}" th:classappend="${#strings.contains(uri,'billings') ? 'active-tab' : ''}">
 					<span th:text="${#messages.msg('billings.overview')}">Pregled potraživanja</span>
 				</a>
 			</nav>

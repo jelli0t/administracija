@@ -1,5 +1,6 @@
 package rs.neks.administration.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,11 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<Customer> findAll(boolean aciveOnly) {
 		return customerDao.findAll(aciveOnly);
+	}
+	
+	@Override
+	public List<Customer> findAllInvoicesOwners(LocalDateTime from, LocalDateTime to) {
+		return customerDao.findAllInvoicesOwners(from, to);
 	}
 
 	@Override

@@ -17,6 +17,8 @@ public abstract class TextUtils {
 		
 	public static final String DECIMAL_NUM_COMMA_FORMAT = "^(\\d*\\,)?\\d+$";
 	public static final String DECIMAL_NUM_DOT_FORMAT = "^(\\d*\\.)?\\d+$";
+	
+	public static final String STRONG_PASSWORD_STRENGTH_REGEX = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[#!@%$*?&_]).{8,32}";
 
 	public static boolean isEmpty(@Nullable Object str) {
 		return (str == null || EMPTY.equals(str));

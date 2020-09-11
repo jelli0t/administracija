@@ -1,5 +1,6 @@
 package rs.neks.administration.dao;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import rs.neks.administration.model.Customer;
@@ -29,5 +30,13 @@ public interface CustomerDao extends CommonRepository<Customer> {
 	 * @param aciveOnly
 	 * */
 	public List<Customer> findAll(String nameLike, boolean aciveOnly);
+
+	/**
+	 * Find all Customers which are invoice owners.
+	 * 
+	 * @param from
+	 * @param to
+	 * */
+	public List<Customer> findAllInvoicesOwners(LocalDateTime from, LocalDateTime to);
 	
 }

@@ -3,6 +3,7 @@
  */
 package rs.neks.administration.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import rs.neks.administration.model.Customer;
@@ -27,6 +28,14 @@ public interface CustomerService {
 	 * @param aciveOnly
 	 * */
 	public List<Customer> findAll(boolean aciveOnly);
+	
+	/**
+	 * Find all Customers which are invoice owners.
+	 * 
+	 * @param from
+	 * @param to
+	 * */
+	public List<Customer> findAllInvoicesOwners(LocalDateTime from, LocalDateTime to);
 	
 	/**
 	 * Pronalazi listu Customer-a.<br>

@@ -60,7 +60,7 @@
 			<div>
 				<span th:text="${inv.quantity}"></span>
 			</div>
-			<div class="txt-right">
+			<div class="txt-right black-txt">
 				<span th:text="${#numbers.formatDecimal(inv.totalAmount,1,'POINT',2,'COMMA')}"></span>
 			</div>
 			<div>
@@ -172,7 +172,9 @@
 						<td><label for="inv_total" >Vrednost (sa PDV)</label></td>
 						<td>
 							<span th:if="${#fields.hasErrors('totalAmount')}" th:errors="*{totalAmount}" class="fieldError-label"></span>
-							<input type="text" id="inv_total" th:field="*{totalAmount}" class="m-input" autocomplete="off" style="font-weight: bolder;" />
+<!-- 							<input type="text" id="inv_total" th:field="*{totalAmount}" class="m-input" autocomplete="off" style="font-weight: bolder;" /> -->
+							<input type="text" id="inv_total" name="totalAmount" th:value="${#numbers.formatDecimal(invoice.totalAmount,0,2,'COMMA')}" 
+								autocomplete="off" class="l-input" style="font-weight: bolder;" />
 						</td>
 					</tr>
 					<tr>
