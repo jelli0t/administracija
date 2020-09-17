@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragment/head :: head( ~{::title} )">
+	<meta charset="UTF-8">
+	<title>Operateri</title>
+</head>
+
+
+<body class="fx-box fx-dir-col">
+	<header th:replace="fragment/header :: header"></header>
+	<main class="fx-box fx-dir-row fx-grow1">
+		<!-- 
+		<aside id="aside-left">
+			<div style="width: 220px;" class="x-1em-padding y-2em-padding">
+				<a th:with="letter=${T(rs.neks.administration.util.TextUtils).toChar(i)}"
+					th:href="@{/customers/search/{first_letter}(first_letter=${letter})}" class="x-05em-margin bttn-3d"
+					th:each="i: ${#numbers.sequence(65, 90)}" th:text="${letter}"
+					th:classappend="${#strings.equals(searchParam, letter)} ? 'bttn-3d-ok' : ''">
+				</a>
+			</div>
+		</aside>
+		 -->
+		<section id="main_conetent" class="fx-box fx-grow1 fx-wrap fx-justify-start fx-valign-start fx-aligncnt-start x-2em-padding y-1em-padding">		
+<!-- 			<th:block th:include="fragment/customer :: overview"></th:block>			 -->
+
+			<article class="popup-box customer-box fx-flex-0 x-1em-margin y-1em-margin txt-center"
+				style="line-height: 250px;">
+				<a th:href="@{/operators/add}" class="bttn-3d bttn-3d-ok"
+					onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');">
+					<span>Dodaj Operatera</span>	
+				</a>
+			</article>
+				
+			<th:block th:unless="${#lists.isEmpty(operators)}">		
+				<article th:each="op, stat : ${operators}" th:id="${'operator_' + op.id}" 
+					class="popup-box customer-box fx-flex-0 x-1em-margin y-1em-margin">
+					<div class="popup-box-header">
+						<span th:text="${op.fullName}"></span>
+						<div style="float: right;">				
+							<a th:href="@{/operators/{op_id}/edit(op_id = ${op.id})}"
+								onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');"
+								th:attr="data-title=${'Izmeni podatke o Operateru'}" class="hover-title">
+								<img alt="Izmeni" th:src="@{/resources/img/edit.svg}" height="16">	
+							</a>
+							<!-- 
+							&ensp;
+							<a th:href="@{/customers/{cust_id}/remove(cust_id = ${cust.id})}"
+								onclick="event.preventDefault(); insertFragmentTo(this.href, 'popup_placeholder');"
+								th:attr="data-title=${'Obriši kupca'}" class="hover-title">
+								<img alt="Obriši" th:src="@{/resources/img/delete.svg}" height="16">	
+							</a>
+							 -->		
+						</div>
+					</div>
+					<div class="customer-box-body x-1em-padding y-1em-padding fx-box fx-dir-col">
+						<table class="txt-left">
+							<tr>
+								<td><label th:text="${#messages.msg('username')}"></label></td>
+								<td style="font-weight: bolder;"><span th:text="${op.username}"></span></td>
+							</tr>
+							<tr>
+								<td><label th:text="${#messages.msg('customer.name')}"></label></td>
+								<td><span th:text="${op.firstName}"></span></td>
+							</tr>
+							<tr>
+								<td><label th:text="${#messages.msg('customer.alt.name')}"></label></td>
+								<td><span th:text="${op.lastName}"></span></td>
+							</tr>
+						</table>
+					</div>
+				</article>
+			</th:block>
+		</section>
+	</main>
+	
+	<footer th:replace="fragment/footer :: footer"></footer>
+</body>
+
+
+<th:block th:if="${operator != null}">
+<div th:fragment="edit" class="overlay">		
+	<div class="popup-box">
+		<div class="popup-box-header">
+			<span th:text="${operator?.id != null ? 'Izmeni operatera' : 'Dodaj novog operatera'}"></span>
+			<button class="bttn-3d bttn-3d-xs" style="float: right;" onclick="event.preventDefault(); javascript:closePopup();">X</button>
+		</div>
+		<!-- 			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');" -->
+		<form th:action="@{/operators/save}" th:object="${operator}" method="post" name="add_or_edit_operator_form"	
+			onsubmit="event.preventDefault(); javascript:postAndFragmentResult(this, 'main_conetent');"
+			class="y-1em-padding x-2em-padding">
+			<table>
+				<tr>
+					<td><label for="op_firstname" >Ime</label></td>
+					<td><input type="text" id="op_firstname" th:field="*{firstName}" /></td>
+				</tr>
+				<tr>
+					<td><label for="op_lastname" >Prezime</label></td>
+					<td><input type="text" id="op_lastname" th:field="*{lastName}" /></td>
+				</tr>
+				<tr>
+					<td><label for="op_username" th:text="${#messages.msg('username')}">Naziv kupca</label></td>
+					<td>
+						<span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="fieldError-label"></span>
+						<input type="text" id="op_username" th:field="*{username}" autocomplete="off" />
+					</td>
+				</tr>
+				<tr>
+					<td><label for="op_password" th:text="${#messages.msg('password')}">Naziv kupca</label></td>
+					<td>
+						<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError-label"></span>
+						<input type="password" id="op_password" th:field="*{password}" autocomplete="off" />
+					</td>
+				</tr>				
+				<tr>
+					<td></td>
+					<td>
+						<input type="checkbox" id="op_active" th:field="*{active}" checked="checked">
+						<label for="op_active" >Aktian</label>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" class="y-1em-padding txt-right">
+						<input type="hidden" th:field="*{id}">							
+						<input type="button" value="Odustani" class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
+						&emsp;
+						<input type="submit" value="Sacuvaj" class="bttn-3d bttn-3d-ok">
+					</td>
+				</tr>
+			</table>		
+		</form>
+	</div>
+</div>
+</th:block>
+
+</html>

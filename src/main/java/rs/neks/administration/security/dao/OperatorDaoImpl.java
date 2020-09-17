@@ -1,5 +1,8 @@
 package rs.neks.administration.security.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
@@ -29,4 +32,20 @@ public class OperatorDaoImpl extends CommonRepositoryImp<Operator> implements Op
 		return null;
 	}
 
+	
+	@Override
+	public List<Operator> findAll(boolean activeOnly) {
+		List<Operator> operators = null;
+		String HQL = new StringBuilder("from rs.neks.administration.security.model.Operator where 1=1")
+				.append(activeOnly ? " and active = 1" : TextUtils.EMPTY)
+				.append(" order by username")
+				.toString();
+		try {
+			Query query = sessionFactory.getCurrentSession().createQuery(HQL);
+			operators = query.getResultList();
+		} catch (Exception e) {
+			operators = new ArrayList<>(0);
+		}
+		return operators;
+	}
 }

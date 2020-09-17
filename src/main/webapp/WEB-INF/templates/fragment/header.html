@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 	<head>
 		<meta charset="UTF-8">
 	</head>
@@ -23,9 +24,9 @@
 		</div>
 		<!-- Years selection -->
 		<div class="fx-grow1">
-			<label th:text="${#messages.msg('year')}"></label>
-			<select name="year" id="years_selection" style="font-weight: bolder;" 
-				onchange="javascript:switch_year(this.value);">
+			<label th:text="${#messages.msg('year')}"></label>			
+			<select name="year" id="years_selection" style="font-weight: bolder;"
+				th:onchange="javascript:switch_year(this.value, /*[[${year_url}]]*/)">
 			    <option th:each="y : ${#numbers.sequence(2010, 2099)}"
 			    	th:value="${y}" th:text="${y}"
 			    	th:selected="${y == year}">
@@ -33,9 +34,45 @@
 			</select>
 		</div>
 		
-		<div class="fx-grow2 txt-right">
-			LANG
+		<div class="fx-grow2 fx-box fx-dir-row fx-valign-cnt fx-justify-end">
+			<a th:href="@{/operators}" th:attr="data-title=${'Operateri'}" class="hover-title x-1em-padding">
+				<img alt="Operateri" th:src="@{/resources/img/operators.svg}" height="32">
+			</a>
 			
+			<div class="dropdown-box">
+				<a href="javascript:;" class="dropdown-bttn" 
+					onclick="(function(){ $('#lang-selector').toggle(); return false; })(); return false;">
+					<img alt="sr" th:src="@{/resources/img/serbia.svg}" height="20">
+					<span class="down-arrow">&#x25BE;</span>					
+				</a>
+				<ul class="dropdown-menu popup-box" id="lang-selector">
+					<li class="tr-li">
+						<a th:href="@{/}"><img alt="sr" th:src="@{/resources/img/serbia.svg}" height="20"></a>
+					</li>
+					<li class="tr-li">
+						<a th:href="@{/}"><img alt="sr" th:src="@{/resources/img/uk.svg}" height="20"></a>
+					</li>
+				</ul>
+			</div>			
+				
+			<div sec:authorize="isAuthenticated()" class="dropdown-box">
+				<a href="javascript:;" class="dropdown-bttn" 
+					onclick="(function(){ $('#operator-menu').toggle(); return false; })(); return false;">
+					<img alt="Neks" th:src="@{/resources/img/user.svg}" height="20"> 
+					<span sec:authentication="principal.fullName">Bob</span>
+					<span class="down-arrow">&#x25BE;</span>					
+				</a>
+				<ul class="dropdown-menu popup-box" id="operator-menu">
+					<li class="tr-li" style="width: 100%;">
+						<form th:action="@{/logout}" method="post" id="logout_form">
+							<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+							<a href="javascript:;" onclick="document.getElementById('logout_form').submit();"
+								style="display: inline-block;"
+								th:text="${#messages.msg('logout')}"></a>
+						</form>
+					</li>	
+				</ul>
+	        </div>
 		</div>
 	</header>	
 </html>

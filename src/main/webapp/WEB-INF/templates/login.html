@@ -6,41 +6,37 @@
 	<title>Prijava</title>
 </head>
 
-<body class="fx-box fx-justify-cnt fx-valign-start">
+<body class="fx-box fx-justify-cnt fx-valign-cnt">
 
-	<div class="popup-box fx-flex-0" style="margin-top: 33%;">
-		<div class="popup-box-header">
-			<img alt="Neks" th:src="@{/resources/img/neks_logo_32.png}" height="28">
-			<span>Prijavi se</span>
+	<div class="popup-box login-box fx-flex-0">		
+		<div class="popup-box-header">			
+			<span th:text="${#messages.msg('login')}">Prijavi se</span>
 		</div>
 		<div class="x-2em-padding y-1em-padding">
-			<form action="" th:object="${operator}">
-			<table>
-				<tr>
-					<td>
-						<label for="username">Korisničko ime</label><br>
-						<span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="fieldError-label"></span>
-						<input type="text" id="username" th:field="*{username}" class="full-width"
-							th:appendclass="${#fields.hasErrors('username')}? fieldError" />
-					</td>
-				</tr>				
-				<tr>
-					<td>
-						<label for="pay_pdate" >Lozinka</label><br>
-						<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError-label"></span>
-						<input type="password" id="pay_pdate" th:field="*{password}" class="full-width"
-							th:appendclass="${#fields.hasErrors('username')}? fieldError" />
-					</td>
-				</tr>
-				<tr>
-					<td colspan="1"><br></td>
-				</tr>
-				<tr>
-					<td class="y-1em-padding txt-right">
-						<input type="submit" value="Prijavi se" class="bttn-3d bttn-3d-ok">
-					</td>
-				</tr>
-			</table>
+			<div class="y-1em-padding txt-center">
+				<img alt="Neks" th:src="@{/resources/img/neks_logo_32.png}"><br>
+				<span class="date-value">ADMINISTRACIJA</span>
+			</div>
+			<form name="login_form" th:action="@{/login}" method="post" th:object="${operator}">
+				<div th:if="${param.error}" class="fieldError-label">
+                    <span th:text="${#messages.msg('login.bad.credential.error')}"></span>
+                </div>
+				<div class="y-05em-padding">
+					<label for="username" th:text="${#messages.msg('username')}">Korisničko ime</label><br>
+					<span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="fieldError-label"></span>
+					<input type="text" id="username" th:field="*{username}" class="full-width"
+						th:appendclass="${#fields.hasErrors('username')}? fieldError" />
+				</div>	
+				<div class="y-05em-padding">
+					<label for="pay_pdate" th:text="${#messages.msg('password')}">Lozinka</label><br>
+					<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="fieldError-label"></span>
+					<input type="password" id="pay_pdate" th:field="*{password}" class="full-width"
+						th:appendclass="${#fields.hasErrors('username')}? fieldError" />
+				</div>
+				<div class="y-1em-padding txt-right">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+					<input type="submit" th:value="${#messages.msg('login')}" class="bttn-3d bttn-3d-ok full-width">				
+				</div>
 			</form>
 		</div>
 	</div>

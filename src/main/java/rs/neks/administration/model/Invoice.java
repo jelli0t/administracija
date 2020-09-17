@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalDouble;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,8 +39,8 @@ public class Invoice implements Idable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@NotNull(message = "Molimo unesite broj fakture")
-	@Size(min = 1, max = 9, message = "Sifra kupca mora sadrzati izmedju 1 i 9 karaktera")
+	@NotNull(message = "{validation.invoice.no.empty.error}")
+	@Size(min = 1, max = 9, message = "{validation.invoice.no.size.error}")
 	@Column(name = "invoice_no")
 	private String invoiceNo;
 	
@@ -49,6 +48,7 @@ public class Invoice implements Idable {
     @JoinColumn(name = "customer_id")
 	private Customer customer;
 	
+	@NotNull(message = "{validation.invoice.created.date.error}")
 	@Column(name = "created_on")
 	private LocalDateTime createdOn;
 

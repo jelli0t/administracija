@@ -46,22 +46,23 @@ public class BillingController extends YearAware {
 	@Autowired
 	private CustomerService customerService;
 	
-	@RequestMapping(method = RequestMethod.GET)
-	public String defaultOverview(Model model) {
+	
+	@RequestMapping(path = {"", "/customer/{customerId}"}, method = RequestMethod.GET)
+	public String billingForCustomer(@PathVariable Optional<Integer> customerId, Model model) {
 		int year = Optional.ofNullable( model.getAttribute("year") ).map(y -> (int) y).orElse(0);
 		final LocalDateTime from = DateUtils.makeOrDefault(year, 1, 1);
 		final LocalDateTime to = from.plusYears(1);
-		List<Invoice> invoices = null;
-		Invoice lastInvoice = invoiceService.findLast();		
-		if(lastInvoice != null) {
-			invoices = invoiceService.findAll(from, to, lastInvoice.getCustomer(), true);
-			model.addAttribute("customer", lastInvoice.getCustomer());
-		} else {			
-			invoices = invoiceService.findAllSortedByCustomer(from, to);
-		}		
+		final Customer customer = customerId
+				.map(id -> customerService.findById(id))
+				.orElse(invoiceService.findLast().getCustomer());
+		/* Get Invoices */
+		List<Invoice> invoices = Optional.ofNullable(customer)
+				.map(c -> invoiceService.findAll(from, to, c, true))
+				.orElse(invoiceService.findAllSortedByCustomer(from, to));
 		List<Customer> customers = customerService.findAllInvoicesOwners(from, to);
 		model.addAttribute("invoices", invoices);
 		model.addAttribute("customers", customers);
+		model.addAttribute("customer", customer);
 		model.addAttribute("month", from.getMonthValue());
 		model.addAttribute("year", from.getYear());
 		return "billings";

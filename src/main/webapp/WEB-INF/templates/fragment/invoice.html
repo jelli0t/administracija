@@ -46,7 +46,9 @@
 				<span th:text="${#strings.concat(stat.count, '.')}" class="ordinal"></span>				
 			</div>
 			<div class="black-txt">
-				<span th:text="${inv.customer.name}"></span>
+				<a th:href="@{/billings/customer/{cust_id}(cust_id = ${inv.customer.id})}">
+					<span th:text="${inv.customer.name}"></span>
+				</a>
 			</div>
 			<div>
 				<span th:text="${inv.invoiceNo}"></span>
@@ -136,7 +138,7 @@
 				class="y-1em-padding x-2em-padding">
 				<table>
 					<tr>
-						<td><label for="cust_name" >Kupac</label></td>
+						<td><label for="cust_name" class="required" th:text="${#messages.msg('customer')}">Kupac</label></td>
 						<td>
 							<span th:if="${#fields.hasErrors('customer')}" th:errors="*{customer}" style="display: block; color: red; font-size: 0.915em;"></span>
 							
@@ -149,7 +151,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td><label for="inv_no" th:text="${#messages.msg('invoice.no')}">Broj fakture</label></td>
+						<td><label for="inv_no" class="required" th:text="${#messages.msg('invoice.no')}">Broj fakture</label></td>
 						<td>
 							<span th:if="${#fields.hasErrors('invoiceNo')}" th:errors="*{invoiceNo}" class="fieldError-label"></span>
 							<input type="text" id="inv_no" th:field="*{invoiceNo}" class="s-input"
@@ -173,8 +175,8 @@
 						<td>
 							<span th:if="${#fields.hasErrors('totalAmount')}" th:errors="*{totalAmount}" class="fieldError-label"></span>
 <!-- 							<input type="text" id="inv_total" th:field="*{totalAmount}" class="m-input" autocomplete="off" style="font-weight: bolder;" /> -->
-							<input type="text" id="inv_total" name="totalAmount" th:value="${#numbers.formatDecimal(invoice.totalAmount,0,2,'COMMA')}" 
-								autocomplete="off" class="l-input" style="font-weight: bolder;" />
+							<input type="text" id="inv_total" name="totalAmount" th:value="${#numbers.formatDecimal(invoice.totalAmount,1,2,'COMMA')}" 
+								autocomplete="off" class="l-input price" style="font-weight: bolder;" />
 						</td>
 					</tr>
 					<tr>

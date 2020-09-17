@@ -3,8 +3,8 @@
 
 <head th:fragment="head(title)">
 	<meta charset="UTF-8">
-<!-- 	<meta name="_csrf" th:content="${_csrf.token}"/> -->
-<!-- 	<meta name="_csrf_header" th:content="${_csrf.headerName}"/> -->
+	<meta name="_csrf" th:content="${_csrf.token}"/>
+	<meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
 	<title th:replace="${title}">Administracija | NEKS d.o.o.</title>
@@ -42,8 +42,11 @@
 				data: JSON.stringify( json ),
 				dataType : 'html',
 				beforeSend: function(xhr) {
-// 		           		xhr.setRequestHeader(csrf[0], csrf[1]);
-		        	}
+		           	xhr.setRequestHeader(
+		           		$("meta[name='_csrf_header']").attr("content"),
+		           		$("meta[name='_csrf']").attr("content")	
+		           	);
+		        }
 			})
 			.done(function( response ) {
 				$('#'+target).html(response);
@@ -89,19 +92,22 @@
 	    }
 	    
 	    
-	    function switch_year(year) {
+	    function switch_year(year, url) {
 	    	if(year) {
 	    		$('#popup_placeholder').html('<div class="overlay"><div class="loader">Loading...</div></div>');
 	    		var href = window.location.href;
 				var data = {};
 				data['year'] = year;
 	    		$.ajax({
-					url: href + '/year',
+					url: url,
 					type : 'POST',
 					data: data,
 					beforeSend: function(xhr) {
-//	 		           		xhr.setRequestHeader(csrf[0], csrf[1]);
-			        	}
+						xhr.setRequestHeader(
+			           		$("meta[name='_csrf_header']").attr("content"),
+			           		$("meta[name='_csrf']").attr("content")	
+				        );
+			        }
 				})
 				.done(function( response ) {
 					console.log('Uspesno promenjena godina.');
@@ -114,9 +120,7 @@
 					$('#popup_placeholder').empty();
 				});
 	    	}
-	    }
-	    
-	    
+	    }	    
 	</script>
 </head>
 

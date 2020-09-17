@@ -3,6 +3,7 @@ package rs.neks.administration.security.model;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,11 +13,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import rs.neks.administration.model.Idable;
@@ -38,6 +39,10 @@ public class Operator implements UserDetails, Idable {
 	@Size(min = 9, max = 50, message = "korisnicko ime mora sadrzati izmedju 9 i 50 karaktera")
 	private String username;
 	
+	@NotNull
+	@Pattern(
+		regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&-+!])(?=\\S+$).{8,100}$", 
+		message = "{validation.password.format.error}")
 	private String password;
 	
 	@Column(name = "first_name")
@@ -108,7 +113,7 @@ public class Operator implements UserDetails, Idable {
 	}
 
 	public Boolean getActive() {
-		return active;
+		return Optional.ofNullable(this.active).orElse(true);
 	}
 
 	public void setActive(Boolean active) {
@@ -146,25 +151,21 @@ public class Operator implements UserDetails, Idable {
 
 	@Override
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.active;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.active;
 	}
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.active;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.active;
 	}
 }

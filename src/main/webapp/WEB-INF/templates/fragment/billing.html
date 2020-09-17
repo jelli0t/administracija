@@ -203,10 +203,8 @@
 			<table>
 				<tr th:with="inv=${invoice}">
 					<td><label for="inv_no" >Broj fakture</label>:</td>
-					<td>
-						<span th:if="${#fields.hasErrors('invoice')}" th:errors="*{invoice}" class="fieldError-label"></span>
-						<input type="text" id="inv_no" name="invoice" th:value="${inv.id}" class="s-input"
-							th:appendclass="${#fields.hasErrors('invoice')}? fieldError" readonly="readonly"/>
+					<td>						
+						<input type="text" id="inv_no" th:value="${inv.invoiceNo}" class="s-input" readonly="readonly" disabled="disabled" />
 					</td>
 				</tr>				
 				<tr>
@@ -218,7 +216,7 @@
 					<td>
 						<input type="text" id="pay_amount" name="amount" 
 							th:value="${#numbers.formatDecimal(payment.amount,0,2,'COMMA')}"
-							class="l-input" style="font-weight: bolder;" />
+							class="l-input price" style="font-weight: bolder;" />
 					</td>
 				</tr>
 				<tr>
@@ -226,7 +224,8 @@
 				</tr>
 				<tr>
 					<td colspan="2" class="y-1em-padding txt-right">
-						<input type="hidden" th:field="*{id}">							
+						<input type="hidden" th:field="*{id}">
+						<input type="hidden" name="invoice" th:value="${invoice.id}"> 	
 						<input type="button" value="Odustani" class="bttn-3d" onclick="event.preventDefault(); javascript:closePopup();">
 						&emsp;
 						<input type="submit" value="Sačuvaj" class="bttn-3d bttn-3d-ok">

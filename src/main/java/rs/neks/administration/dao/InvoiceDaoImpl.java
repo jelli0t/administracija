@@ -74,7 +74,7 @@ public class InvoiceDaoImpl extends CommonRepositoryImp<Invoice> implements Invo
 		Optional.ofNullable(startDate).ifPresent(x -> queryBuilder.append(" and inv.createdOn >= :start_date"));
 		Optional.ofNullable(endDate).ifPresent(x -> queryBuilder.append(" and inv.createdOn < :end_date"));
 		Optional.ofNullable(customer).ifPresent(x -> queryBuilder.append(" and inv.customer = :customer"));
-		queryBuilder.append(" order by inv.createdOn");			
+		queryBuilder.append(" order by inv.createdOn, inv.invoiceNo");			
 		try {		
 			Query query = sessionFactory.getCurrentSession().createQuery(queryBuilder.toString());
 			Optional.ofNullable(startDate).ifPresent(x -> { query.setParameter("start_date", x); });

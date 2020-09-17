@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @ComponentScan(basePackages = {"rs.neks.administration.dao", "rs.neks.administration.service"})
-//@PropertySource({"classpath:datasource.properties"})
 @PropertySource({"classpath:variables.properties"})
 @PropertySource(value = "${application.prop.file}", ignoreResourceNotFound = true)
 @EnableTransactionManagement
@@ -50,7 +49,7 @@ public class DatasourceConfiguration {
 	@Bean(name = "sessionFactory")
 	public SessionFactory getSessionFactory(DataSource dataSource){
 		LocalSessionFactoryBuilder sessionFactory = new LocalSessionFactoryBuilder(dataSource);
-		sessionFactory.scanPackages("rs.neks.administration.model");
+		sessionFactory.scanPackages("rs.neks.administration.model", "rs.neks.administration.security.model");
 		sessionFactory.addProperties(getHibernateProperties());
 		return sessionFactory.buildSessionFactory();
 	}
@@ -63,8 +62,6 @@ public class DatasourceConfiguration {
 		HibernateTransactionManager txManager = new HibernateTransactionManager(sessionFactory);
 		return txManager;
 	}
-	
-	
 	
 	private Properties getHibernateProperties(){
 		Properties hibernateProperties = new Properties();

@@ -12,7 +12,7 @@
 
 	<main class="fx-box fx-dir-row fx-grow1">
 		<aside id="aside-left" class="y-2em-padding">
-			<ul>
+			<ul class="vnav-container">
 				<li th:each="cus, stat : ${customers}" class="vnav cust-nav" th:id="${'customer_' + cus.id}">
 					<a th:href="@{/billings/overview/{yyyy}/customer/{cus_id}(yyyy=${year}, cus_id=${cus.id})}"
 						onclick="event.preventDefault(); insertFragmentTo(this.href, 'main_conetent');">
