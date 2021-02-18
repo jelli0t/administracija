@@ -15,7 +15,7 @@
 		<springframework.version>5.2.5.RELEASE</springframework.version>
 		<springsecurity.version>5.2.5.RELEASE</springsecurity.version>
 		<hibernate.version>5.4.10.Final</hibernate.version>
-		<jackson.version>2.10.3</jackson.version>
+		<jackson.version>2.12.1</jackson.version>
 		<swagger.version>2.9.2</swagger.version>
 		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 		<thymeleaf.extras.version>3.0.4.RELEASE</thymeleaf.extras.version>
