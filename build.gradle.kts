@@ -4,8 +4,15 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
+
 plugins {
-    `java-library`
+    val kotlinVersion = "2.0.0"
+
+    java
+    id("org.springframework.boot") version "3.4.4"
+    id("io.spring.dependency-management") version "1.1.5"
+    kotlin("jvm") version kotlinVersion
+    kotlin("plugin.spring") version kotlinVersion
     `maven-publish`
 }
 
@@ -17,51 +24,62 @@ repositories {
 }
 
 dependencies {
-    api(libs.org.springframework.spring.core)
-    api(libs.org.springframework.spring.web)
-    api(libs.org.springframework.spring.webmvc)
-    api(libs.org.springframework.spring.test)
-    api(libs.org.springframework.security.spring.security.core)
-    api(libs.org.springframework.security.spring.security.web)
-    api(libs.org.springframework.security.spring.security.config)
-    api(libs.org.springframework.security.oauth.spring.security.oauth2)
-    api(libs.com.fasterxml.jackson.core.jackson.core)
-    api(libs.com.fasterxml.jackson.core.jackson.databind)
-    api(libs.com.fasterxml.jackson.core.jackson.annotations)
-    api(libs.javax.persistence.javax.persistence.api)
-    api(libs.org.hibernate.hibernate.core)
-    api(libs.org.hibernate.validator.hibernate.validator)
-    api(libs.org.springframework.spring.orm)
-    api(libs.io.springfox.springfox.swagger2)
-    api(libs.io.springfox.springfox.swagger.ui)
-    api(libs.io.jsonwebtoken.jjwt.api)
-    api(libs.org.thymeleaf.thymeleaf)
-    api(libs.org.thymeleaf.thymeleaf.spring5)
-    api(libs.org.thymeleaf.extras.thymeleaf.extras.java8time)
-    api(libs.org.thymeleaf.extras.thymeleaf.extras.springsecurity5)
-    api(libs.org.apache.commons.commons.dbcp2)
-    api(libs.mysql.mysql.connector.java)
-    api(libs.junit.junit)
-    runtimeOnly(libs.io.jsonwebtoken.jjwt.impl)
-    runtimeOnly(libs.io.jsonwebtoken.jjwt.jackson)
-    providedCompile(libs.javax.servlet.javax.servlet.api)
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
+//    api(libs.org.springframework.spring.core)
+//    api(libs.org.springframework.spring.web)
+//    api(libs.org.springframework.spring.webmvc)
+//    api(libs.org.springframework.spring.test)
+//    api(libs.org.springframework.security.spring.security.core)
+//    api(libs.org.springframework.security.spring.security.web)
+//    api(libs.org.springframework.security.spring.security.config)
+//    api(libs.org.springframework.security.oauth.spring.security.oauth2)
+//    api(libs.com.fasterxml.jackson.core.jackson.core)
+//    api(libs.com.fasterxml.jackson.core.jackson.databind)
+//    api(libs.com.fasterxml.jackson.core.jackson.annotations)
+//    api(libs.javax.persistence.javax.persistence.api)
+//    api(libs.org.hibernate.hibernate.core)
+//    api(libs.org.hibernate.validator.hibernate.validator)
+//    api(libs.org.springframework.spring.orm)
+//    api(libs.io.springfox.springfox.swagger2)
+//    api(libs.io.springfox.springfox.swagger.ui)
+//    api(libs.io.jsonwebtoken.jjwt.api)
+//    api(libs.org.thymeleaf.thymeleaf)
+//    api(libs.org.thymeleaf.thymeleaf.spring5)
+//    api(libs.org.thymeleaf.extras.thymeleaf.extras.java8time)
+//    api(libs.org.thymeleaf.extras.thymeleaf.extras.springsecurity5)
+//    api(libs.org.apache.commons.commons.dbcp2)
+//    api(libs.mysql.mysql.connector.java)
+//    api(libs.junit.junit)
+//    runtimeOnly(libs.io.jsonwebtoken.jjwt.impl)
+//    runtimeOnly(libs.io.jsonwebtoken.jjwt.jackson)
 }
 
 group = "rs.neks"
 version = "0.0.1-SNAPSHOT"
 description = "administration"
-java.sourceCompatibility = JavaVersion.VERSION_1_8
 
-publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
-tasks.withType<JavaCompile>() {
-    options.encoding = "UTF-8"
-}
+//publishing {
+//    publications.create<MavenPublication>("maven") {
+//        from(components["java"])
+//    }
+//}
 
-tasks.withType<Javadoc>() {
-    options.encoding = "UTF-8"
+//tasks.withType<JavaCompile>() {
+//    options.encoding = "UTF-8"
+//}
+
+//tasks.withType<Javadoc>() {
+//    options.encodin
+//}
+
+tasks.bootJar {
+    archiveFileName = "administration-api.jar"
+    mainClass = "rs.neks.administration.AdministrationApi"
 }
