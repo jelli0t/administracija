@@ -8,21 +8,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import rs.neks.administration.util.AmountDeserializer;
 import rs.neks.administration.util.DateUtils;
 import rs.neks.administration.util.TextUtils;

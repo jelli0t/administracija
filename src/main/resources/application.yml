@@ -1,0 +1,7 @@
+spring:
+  # Jackson serialization settings
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false

@@ -4,15 +4,13 @@
  * This project uses @Incubating APIs which are subject to change.
  */
 
-
 plugins {
-    val kotlinVersion = "2.0.0"
-
     java
     id("org.springframework.boot") version "3.4.4"
-    id("io.spring.dependency-management") version "1.1.5"
-    kotlin("jvm") version kotlinVersion
-    kotlin("plugin.spring") version kotlinVersion
+    id("io.spring.dependency-management") version "1.1.7"
+
+    kotlin("jvm") version "2.1.21"
+    kotlin("plugin.spring") version "1.9.25"
     `maven-publish`
 }
 
@@ -25,6 +23,8 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-security")
 
 //    api(libs.org.springframework.spring.core)
 //    api(libs.org.springframework.spring.web)
@@ -81,5 +81,5 @@ java {
 
 tasks.bootJar {
     archiveFileName = "administration-api.jar"
-    mainClass = "rs.neks.administration.AdministrationApi"
+    mainClass = "rs.neks.administration.ApplicationApi"
 }
