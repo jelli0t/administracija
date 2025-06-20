@@ -10,7 +10,8 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 
     kotlin("jvm") version "2.1.21"
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("plugin.spring") version "2.1.21"
+    kotlin("plugin.jpa") version "2.1.21"
     `maven-publish`
 }
 
@@ -21,14 +22,21 @@ repositories {
     }
 }
 
+val springdocOpenapiVersion by extra("2.8.9")
+
+
 dependencies {
+    // Spring Boot Core
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-security")
 
-//    api(libs.org.springframework.spring.core)
-//    api(libs.org.springframework.spring.web)
-//    api(libs.org.springframework.spring.webmvc)
+    // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocOpenapiVersion")
+
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-datetime
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+
 //    api(libs.org.springframework.spring.test)
 //    api(libs.org.springframework.security.spring.security.core)
 //    api(libs.org.springframework.security.spring.security.web)
